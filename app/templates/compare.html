@@ -1,0 +1,145 @@
+{% comment %} {% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+  <h1 class="text-center mb-4">Product Comparison</h1>
+  <div class="table-responsive">
+    <table class="table table-bordered comparison-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          {% for product in products %}
+          <th>{{ product.name }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Brand</th>
+          {% for product in products %}
+          <td>{{ product.brand }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Type</th>
+          {% for product in products %}
+          <td>{{ product.type }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Protein per Serving</th>
+          {% for product in products %}
+          <td>{{ product.protein_per_serving }}g</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Calories</th>
+          {% for product in products %}
+          <td>{{ product.calories }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Price</th>
+          {% for product in products %}
+          <td>${{ "%.2f"|format(product.price) }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Serving Size</th>
+          {% for product in products %}
+          <td>{{ product.serving_size }}g</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Servings per Container</th>
+          {% for product in products %}
+          <td>{{ product.servings_per_container }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Flavors</th>
+          {% for product in products %}
+          <td>{{ product.flavors }}</td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="text-center mt-4">
+    <a href="{{ url_for('main.index') }}" class="btn btn-primary"
+      >Back to Product List</a
+    >
+  </div>
+</div>
+{% endblock %} {% endcomment %}
+
+
+{% extends "base.html" %} 
+{% block content %}
+<div class="container mt-4">
+  <h1 class="text-center mb-4">Product Comparison</h1>
+  <div class="table-responsive">
+    <table class="table table-bordered comparison-table">
+      <thead class="thead-dark">
+        <tr>
+          <th>Feature</th>
+          {% for product in products %}
+          <th>{{ product.name }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Brand</th>
+          {% for product in products %}
+          <td>{{ product.brand }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Type</th>
+          {% for product in products %}
+          <td>{{ product.type }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Protein per Serving</th>
+          {% for product in products %}
+          <td>{{ product.protein_per_serving }}g</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Calories</th>
+          {% for product in products %}
+          <td>{{ product.calories }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Price</th>
+          {% for product in products %}
+          <td>${{ "%.2f"|format(product.price) }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Serving Size</th>
+          {% for product in products %}
+          <td>{{ product.serving_size }}g</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Servings per Container</th>
+          {% for product in products %}
+          <td>{{ product.servings_per_container }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Flavors</th>
+          {% for product in products %}
+          <td>{{ product.flavors }}</td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="text-center mt-4">
+    <a href="{{ url_for('main.index') }}" class="btn btn-primary">Back to Product List</a>
+  </div>
+</div>
+{% endblock %}

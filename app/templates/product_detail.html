@@ -1,0 +1,81 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h1 class="mb-4">{{ product.name }}</h1>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Product Details</h5>
+          <ul class="list-unstyled">
+            <li><strong>Type:</strong> {{ product.type }}</li>
+            <li><strong>Price:</strong> ${{ "%.2f"|format(product.price) }}</li>
+            <li><strong>Serving Size:</strong> {{ product.serving_size }}g</li>
+            <li>
+              <strong>Servings Per Container:</strong> {{
+              product.servings_per_container }}
+            </li>
+            <li><strong>Flavors:</strong> {{ product.flavors }}</li>
+            <li>
+              <strong>Allergens:</strong> {{ product.allergens or 'None' }}
+            </li>
+          </ul>
+          <p class="card-text">{{ product.description }}</p>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-body">
+          <h5 class="card-title">Nutritional Information</h5>
+          <ul class="list-unstyled">
+            <li>
+              <strong>Protein:</strong> {{ product.protein_per_serving }}g per
+              serving
+            </li>
+            <li>
+              <strong>Carbohydrates:</strong> {{ product.carbs_per_serving }}g
+              per serving
+            </li>
+            <li>
+              <strong>Fats:</strong> {{ product.fats_per_serving }}g per serving
+            </li>
+            <li>
+              <strong>Sugar:</strong> {{ product.sugar_per_serving }}g per
+              serving
+            </li>
+            <li>
+              <strong>Calories:</strong> {{ product.calories_per_serving }} per
+              serving
+            </li>
+          </ul>
+          <p class="card-text">{{ product.other_nutrients }}</p>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-body">
+          <h5 class="card-title">Ingredients</h5>
+          <p>
+            <strong>Primary Protein Source:</strong> {{
+            product.primary_protein_source }}
+          </p>
+          <p>
+            <strong>Other Ingredients:</strong> {{ product.other_ingredients }}
+          </p>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-body">
+          <h5 class="card-title">Additional Information</h5>
+          <p>
+            <strong>Serving Suggestions:</strong> {{ product.serving_suggestions
+            }}
+          </p>
+          <p><strong>Storage:</strong> {{ product.storage }}</p>
+          <p><strong>Usage:</strong> {{ product.usage }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
