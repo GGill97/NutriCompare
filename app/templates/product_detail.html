@@ -1,59 +1,131 @@
 {% extends "base.html" %} {% block content %}
 <div class="container mt-4">
   <div class="row">
-    <div class="col-md-8 offset-md-2">
+    <div class="col-lg-8 offset-lg-2">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{{ url_for('main.index') }}">Protein List</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">
+            {{ product.name }}
+          </li>
+        </ol>
+      </nav>
+
       <h1 class="mb-4">{{ product.name }}</h1>
-      <div class="card">
+
+      <!-- Product Image Carousel -->
+      <div
+        id="productCarousel"
+        class="carousel slide mb-4"
+        data-bs-ride="carousel"
+      >
+        <div class="carousel-inner">
+          {% for image in product.images %}
+          <div class="carousel-item {% if loop.first %}active{% endif %}">
+            <img
+              src="{{ image }}"
+              class="d-block w-100"
+              alt="{{ product.name }}"
+            />
+          </div>
+          {% endfor %}
+        </div>
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#productCarousel"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#productCarousel"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+
+      <!-- Product Details -->
+      <div class="card mb-4">
         <div class="card-body">
-          <h5 class="card-title">Product Details</h5>
+          <h2 class="card-title">Product Details</h2>
           <ul class="list-unstyled">
-            <li><strong>Type:</strong> {{ product.type }}</li>
-            <li><strong>Price:</strong> ${{ "%.2f"|format(product.price) }}</li>
-            <li><strong>Serving Size:</strong> {{ product.serving_size }}g</li>
             <li>
+              <i class="bi bi-tag-fill"></i> <strong>Type:</strong> {{
+              product.type|default('Not specified') }}
+            </li>
+            <li>
+              <i class="bi bi-currency-dollar"></i> <strong>Price:</strong> ${{
+              "%.2f"|format(product.price|default(0)) }}
+            </li>
+            <li>
+              <i class="bi bi-box-seam"></i> <strong>Serving Size:</strong> {{
+              product.serving_size|default(0) }}g
+            </li>
+            <li>
+              <i class="bi bi-archive"></i>
               <strong>Servings Per Container:</strong> {{
-              product.servings_per_container }}
+              product.servings_per_container|default(0) }}
             </li>
-            <li><strong>Flavors:</strong> {{ product.flavors }}</li>
             <li>
-              <strong>Allergens:</strong> {{ product.allergens or 'None' }}
+              <i class="bi bi-palette"></i> <strong>Flavors:</strong> {{
+              product.flavors|default('Not specified') }}
+            </li>
+            <li>
+              <i class="bi bi-exclamation-triangle"></i>
+              <strong>Allergens:</strong> {{ product.allergens|default('None')
+              }}
             </li>
           </ul>
+          {% if product.description %}
           <p class="card-text">{{ product.description }}</p>
+          {% endif %}
         </div>
       </div>
 
-      <div class="card mt-4">
+      <!-- Nutritional Information -->
+      <div class="card mb-4">
         <div class="card-body">
-          <h5 class="card-title">Nutritional Information</h5>
+          <h2 class="card-title">Nutritional Information</h2>
           <ul class="list-unstyled">
             <li>
-              <strong>Protein:</strong> {{ product.protein_per_serving }}g per
-              serving
+              <i class="bi bi-egg-fried"></i> <strong>Protein:</strong> {{
+              product.protein_per_serving|default(0, true) }}g per serving
             </li>
             <li>
-              <strong>Carbohydrates:</strong> {{ product.carbs_per_serving }}g
-              per serving
+              <i class="bi bi-bread"></i> <strong>Carbohydrates:</strong> {{
+              product.carbs_per_serving|default(0, true) }}g per serving
             </li>
             <li>
-              <strong>Fats:</strong> {{ product.fats_per_serving }}g per serving
+              <i class="bi bi-droplet"></i> <strong>Fats:</strong> {{
+              product.fats_per_serving|default(0, true) }}g per serving
             </li>
             <li>
-              <strong>Sugar:</strong> {{ product.sugar_per_serving }}g per
-              serving
+              <i class="bi bi-cup"></i> <strong>Sugar:</strong> {{
+              product.sugar_per_serving|default(0, true) }}g per serving
             </li>
             <li>
-              <strong>Calories:</strong> {{ product.calories_per_serving }} per
-              serving
+              <i class="bi bi-lightning"></i> <strong>Calories:</strong> {{
+              product.calories_per_serving|default(0, true) }} per serving
             </li>
           </ul>
-          <p class="card-text">{{ product.other_nutrients }}</p>
+          {% if product.other_nutrients %}
+          <p>{{ product.other_nutrients }}</p>
+          {% endif %}
         </div>
       </div>
 
-      <div class="card mt-4">
+      <!-- Ingredients -->
+      <div class="card mb-4">
         <div class="card-body">
-          <h5 class="card-title">Ingredients</h5>
+          <h2 class="card-title">Ingredients</h2>
           <p>
             <strong>Primary Protein Source:</strong> {{
             product.primary_protein_source }}
@@ -64,16 +136,51 @@
         </div>
       </div>
 
-      <div class="card mt-4">
+      <!-- User Reviews -->
+      <div class="card mb-4">
         <div class="card-body">
-          <h5 class="card-title">Additional Information</h5>
-          <p>
-            <strong>Serving Suggestions:</strong> {{ product.serving_suggestions
-            }}
-          </p>
-          <p><strong>Storage:</strong> {{ product.storage }}</p>
-          <p><strong>Usage:</strong> {{ product.usage }}</p>
+          <h2 class="card-title">User Reviews</h2>
+          <!-- Add your review system here -->
+          <p>No reviews yet. Be the first to review this product!</p>
         </div>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary"
+          ><i class="bi bi-arrow-left"></i> Back to Protein List</a
+        >
+        <a
+          href="{{ url_for('main.compare', products=product.id) }}"
+          class="btn btn-secondary"
+          >Compare This Product <i class="bi bi-bar-chart"></i
+        ></a>
+      </div>
+
+      <!-- Related Products -->
+      <h2 class="mt-5 mb-4">Related Products</h2>
+      <div class="row">
+        {% for related_product in related_products %}
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <img
+              src="{{ related_product.image }}"
+              class="card-img-top"
+              alt="{{ related_product.name }}"
+            />
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ related_product.name }}</h5>
+              <p class="card-text">
+                ${{ "%.2f"|format(related_product.price) }}
+              </p>
+              <a
+                href="{{ url_for('main.product_detail', id=related_product.id) }}"
+                class="btn btn-primary btn-sm mt-auto"
+                >View Details</a
+              >
+            </div>
+          </div>
+        </div>
+        {% endfor %}
       </div>
     </div>
   </div>

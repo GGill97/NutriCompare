@@ -1,13 +1,36 @@
-{% comment %} {% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="container mt-4">
   <h1 class="text-center mb-4">Product Comparison</h1>
+
+  <!-- Nutritional Content Charts -->
+  <div class="row mb-4">
+    <div class="col-md-6 mb-3">
+      <canvas id="macronutrientsChart"></canvas>
+    </div>
+    <div class="col-md-6 mb-3">
+      <canvas id="caloriesChart"></canvas>
+    </div>
+    <div class="col-md-6 mb-3">
+      <canvas id="micronutrientsChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Comparison Table -->
   <div class="table-responsive">
     <table class="table table-bordered comparison-table">
-      <thead>
+      <thead class="thead-dark">
         <tr>
           <th>Feature</th>
           {% for product in products %}
-          <th>{{ product.name }}</th>
+          <th>
+            <img
+              src="{{ product.image_url }}"
+              alt="{{ product.name }}"
+              class="img-fluid"
+              style="max-width: 100px"
+            />
+            {{ product.name }}
+          </th>
           {% endfor %}
         </tr>
       </thead>
@@ -31,6 +54,48 @@
           {% endfor %}
         </tr>
         <tr>
+          <th>Carbs per Serving</th>
+          {% for product in products %}
+          <td>{{ product.carbohydrates }}g</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Fat per Serving</th>
+          {% for product in products %}
+          <td>{{ product.fats }}g</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Saturated Fat</th>
+          {% for product in products %}
+          <td>{{ product.saturated_fats }}g</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Sugar</th>
+          {% for product in products %}
+          <td>{{ product.sugar }}g</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Dietary Fiber</th>
+          {% for product in products %}
+          <td>{{ product.dietary_fiber }}g</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Cholesterol</th>
+          {% for product in products %}
+          <td>{{ product.cholesterol }}mg</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Sodium</th>
+          {% for product in products %}
+          <td>{{ product.sodium }}mg</td>
+          {% endfor %}
+        </tr>
+        <tr>
           <th>Calories</th>
           {% for product in products %}
           <td>{{ product.calories }}</td>
@@ -45,7 +110,7 @@
         <tr>
           <th>Serving Size</th>
           {% for product in products %}
-          <td>{{ product.serving_size }}g</td>
+          <td>{{ product.serving_size }}</td>
           {% endfor %}
         </tr>
         <tr>
@@ -60,6 +125,31 @@
           <td>{{ product.flavors }}</td>
           {% endfor %}
         </tr>
+        <tr>
+          <th>Other Ingredients</th>
+          {% for product in products %}
+          <td>{{ product.ingredients }}</td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <th>Allergens</th>
+          {% for product in products %}
+          <td>{{ product.allergens }}</td>
+          {% endfor %}
+        </tr>
+      </tbody>
+      <tr>
+          <th>Buy Now</th>
+        {% for product in products %}
+        <td>
+            {% if product.source %}
+                <a href="{{ product.source }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary">Buy from Source</a>
+            {% else %}
+                N/A
+            {% endif %}
+        </td>
+        {% endfor %}
+      </tr>
       </tbody>
     </table>
   </div>
@@ -69,77 +159,128 @@
     >
   </div>
 </div>
-{% endblock %} {% endcomment %}
 
+</table>
+{% endblock %} {% block scripts %} {{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      var ctx1 = document.getElementById('macronutrientsChart').getContext('2d');
+      var macronutrientsChart = new Chart(ctx1, {
+          type: 'bar',
+          data: {
+              labels: {{ chart_data.labels | tojson }},
+              datasets: [{
+                  label: 'Protein (g)',
+                  data: {{ chart_data.protein | tojson }},
+                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                  borderColor: 'rgba(255, 99, 132, 1)',
+                  borderWidth: 1
+              }, {
+                  label: 'Carbs (g)',
+                  data: {{ chart_data.carbs | tojson }},
+                  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                  borderColor: 'rgba(54, 162, 235, 1)',
+                  borderWidth: 1
+              }, {
+                  label: 'Fat (g)',
+                  data: {{ chart_data.fat | tojson }},
+                  backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                  borderColor: 'rgba(255, 206, 86, 1)',
+                  borderWidth: 1
+              }, {
+                  label: 'Sugar (g)',
+                  data: {{ chart_data.sugar | tojson }},
+                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                  borderColor: 'rgba(75, 192, 192, 1)',
+                  borderWidth: 1
+              }, {
+                  label: 'Fiber (g)',
+                  data: {{ chart_data.fiber | tojson }},
+                  backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                  borderColor: 'rgba(153, 102, 255, 1)',
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              },
+              responsive: true,
+              plugins: {
+                  title: {
+                      display: true,
+                      text: 'Macronutrients Comparison (per serving)'
+                  }
+              }
+          }
+      });
 
-{% extends "base.html" %} 
-{% block content %}
-<div class="container mt-4">
-  <h1 class="text-center mb-4">Product Comparison</h1>
-  <div class="table-responsive">
-    <table class="table table-bordered comparison-table">
-      <thead class="thead-dark">
-        <tr>
-          <th>Feature</th>
-          {% for product in products %}
-          <th>{{ product.name }}</th>
-          {% endfor %}
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th>Brand</th>
-          {% for product in products %}
-          <td>{{ product.brand }}</td>
-          {% endfor %}
-        </tr>
-        <tr>
-          <th>Type</th>
-          {% for product in products %}
-          <td>{{ product.type }}</td>
-          {% endfor %}
-        </tr>
-        <tr>
-          <th>Protein per Serving</th>
-          {% for product in products %}
-          <td>{{ product.protein_per_serving }}g</td>
-          {% endfor %}
-        </tr>
-        <tr>
-          <th>Calories</th>
-          {% for product in products %}
-          <td>{{ product.calories }}</td>
-          {% endfor %}
-        </tr>
-        <tr>
-          <th>Price</th>
-          {% for product in products %}
-          <td>${{ "%.2f"|format(product.price) }}</td>
-          {% endfor %}
-        </tr>
-        <tr>
-          <th>Serving Size</th>
-          {% for product in products %}
-          <td>{{ product.serving_size }}g</td>
-          {% endfor %}
-        </tr>
-        <tr>
-          <th>Servings per Container</th>
-          {% for product in products %}
-          <td>{{ product.servings_per_container }}</td>
-          {% endfor %}
-        </tr>
-        <tr>
-          <th>Flavors</th>
-          {% for product in products %}
-          <td>{{ product.flavors }}</td>
-          {% endfor %}
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="text-center mt-4">
-    <a href="{{ url_for('main.index') }}" class="btn btn-primary">Back to Product List</a>
-  </div>
-</div>
+      var ctx2 = document.getElementById('caloriesChart').getContext('2d');
+      var caloriesChart = new Chart(ctx2, {
+          type: 'bar',
+          data: {
+              labels: {{ chart_data.labels | tojson }},
+              datasets: [{
+                  label: 'Calories',
+                  data: {{ chart_data.calories | tojson }},
+                  backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                  borderColor: 'rgba(255, 159, 64, 1)',
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              },
+              responsive: true,
+              plugins: {
+                  title: {
+                      display: true,
+                      text: 'Calories Comparison (per serving)'
+                  }
+              }
+          }
+      });
+
+      var ctx3 = document.getElementById('micronutrientsChart').getContext('2d');
+      var micronutrientsChart = new Chart(ctx3, {
+          type: 'bar',
+          data: {
+              labels: {{ chart_data.labels | tojson }},
+              datasets: [{
+                  label: 'Sodium (mg)',
+                  data: {{ chart_data.sodium | tojson }},
+                  backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                  borderColor: 'rgba(255, 99, 132, 1)',
+                  borderWidth: 1
+              }, {
+                  label: 'Cholesterol (mg)',
+                  data: {{ chart_data.cholesterol | tojson }},
+                  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                  borderColor: 'rgba(54, 162, 235, 1)',
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              },
+              responsive: true,
+              plugins: {
+                  title: {
+                      display: true,
+                      text: 'Micronutrients Comparison (per serving)'
+                  }
+              }
+          }
+      });
+  });
+</script>
 {% endblock %}

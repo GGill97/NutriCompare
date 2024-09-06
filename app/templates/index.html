@@ -14,99 +14,77 @@
             <div class="filter-container">
                 <h2>Filters</h2>
                 <form id="filter-form" method="GET" action="{{ url_for('main.index') }}">
-                    <input type="hidden" name="page" value="1">
-                    
                     <!-- Search filter -->
                     <div class="filter-section">
                         <label for="search">Search</label>
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" id="search" name="search" placeholder="Search products..." value="{{ request.args.get('search', '') }}">
+                            <input type="text" class="form-control" id="search" name="search" placeholder="Search products..." value="{{ current_filters.search or '' }}">
                             <button class="btn btn-outline-secondary" type="submit">Search</button>
                         </div>
                     </div>
-
+            
                     <!-- Brand filter -->
                     <div class="filter-section">
                         <label for="brand">Brand</label>
                         <select class="form-select" id="brand" name="brand">
                             <option value="">All Brands</option>
                             {% for brand in brands %}
-                                <option value="{{ brand[0] }}" {% if request.args.get('brand') == brand[0] %}selected{% endif %}>{{ brand[0] }}</option>
+                                <option value="{{ brand[0] }}" {% if current_filters.brand == brand[0] %}selected{% endif %}>{{ brand[0] }}</option>
                             {% endfor %}
                         </select>
                     </div>
-
-                    <!-- Product Types filter -->
+            
+                    <!-- Category filter -->
                     <div class="filter-section">
-                        <label for="protein-type-dropdown">Product Types</label>
-                        <div class="custom-select" id="protein-type-dropdown">
-                            <div class="select-header">
-                                Select Protein Types
-                                <span class="arrow-down">&#9662;</span>
-                            </div>
-                            <div class="options-container" id="protein-type-options">
-                                {% for category in categories %}
-                                    <label class="option">
-                                        <input type="checkbox" name="category" value="{{ category[0] }}" 
-                                               {% if category[0] in request.args.getlist('category') %}checked{% endif %}>
-                                        {{ category[0] }}
-                                    </label>
-                                {% endfor %}
-                            </div>
-                        </div>
+                        <label for="category">Product Types</label>
+                        <select class="form-select" id="category" name="category" multiple>
+                            {% for category in categories %}
+                                <option value="{{ category[0] }}" {% if category[0] in current_filters.category %}selected{% endif %}>{{ category[0] }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-
-                    <!-- Price Range filter -->
+            
+                    <!-- Price Range filter (dropdown) -->
                     <div class="filter-section">
-                        <label>Price Range</label>
-                        <div class="range-slider">
-                            <input type="range" id="price-min" name="price_min" min="0" max="100" value="{{ request.args.get('price_min', 0) }}">
-                            <input type="range" id="price-max" name="price_max" min="0" max="100" value="{{ request.args.get('price_max', 100) }}">
-                        </div>
-                        <div class="range-values">
-                            $<span id="price-min-value">{{ request.args.get('price_min', 0) }}</span> - 
-                            $<span id="price-max-value">{{ request.args.get('price_max', 100) }}</span>
-                        </div>
+                        <label for="price-range">Price Range</label>
+                        <select class="form-select" id="price-range" name="price_range">
+                            <option value="">All Prices</option>
+                            <option value="0-20" {% if current_filters.price_range == '0-20' %}selected{% endif %}>$0 - $20</option>
+                            <option value="20-40" {% if current_filters.price_range == '20-40' %}selected{% endif %}>$20 - $40</option>
+                            <option value="40-60" {% if current_filters.price_range == '40-60' %}selected{% endif %}>$40 - $60</option>
+                            <option value="60+" {% if current_filters.price_range == '60+' %}selected{% endif %}>$60+</option>
+                        </select>
                     </div>
-
-                    <!-- Protein Content filter -->
+            
+                    <!-- Protein Content filter (dropdown) -->
                     <div class="filter-section">
-                        <label for="protein-content-dropdown">Protein Content</label>
-                        <div class="custom-select" id="protein-content-dropdown">
-                            <div class="select-header">
-                                Select Protein Content
-                                <span class="arrow-down">&#9662;</span>
-                            </div>
-                            <div class="options-container" id="protein-content-options">
-                                {% for range in [('0-10', '0 - 10g'), ('10-15', '10 - 15g'), ('15-25', '15 - 25g'), ('25+', '25g+')] %}
-                                    <label class="option">
-                                        <input type="checkbox" name="protein_range" value="{{ range[0] }}" 
-                                               {% if range[0] in request.args.getlist('protein_range') %}checked{% endif %}>
-                                        {{ range[1] }}
-                                    </label>
-                                {% endfor %}
-                            </div>
-                        </div>
+                        <label for="protein-range">Protein Content</label>
+                        <select class="form-select" id="protein-range" name="protein_range">
+                            <option value="">All Protein Levels</option>
+                            <option value="0-15" {% if current_filters.protein_range == '0-15' %}selected{% endif %}>0 - 15g per serving</option>
+                            <option value="15-25" {% if current_filters.protein_range == '15-25' %}selected{% endif %}>15 - 25g per serving</option>
+                            <option value="25+" {% if current_filters.protein_range == '25+' %}selected{% endif %}>25g+ per serving</option>
+                        </select>
                     </div>
-
+            
                     <!-- Sort and Order filters -->
                     <div class="filter-section">
                         <label for="sort">Sort By</label>
                         <select class="form-select" id="sort" name="sort">
-                            <option value="name" {% if request.args.get('sort') == 'name' %}selected{% endif %}>Name</option>
-                            <option value="price" {% if request.args.get('sort') == 'price' %}selected{% endif %}>Price</option>
-                            <option value="protein" {% if request.args.get('sort') == 'protein' %}selected{% endif %}>Protein Content</option>
+                            <option value="name" {% if current_filters.sort == 'name' %}selected{% endif %}>Name</option>
+                            <option value="price" {% if current_filters.sort == 'price' %}selected{% endif %}>Price</option>
+                            <option value="protein" {% if current_filters.sort == 'protein' %}selected{% endif %}>Protein Content</option>
                         </select>
                     </div>
-
+            
                     <div class="filter-section">
                         <label for="order">Order</label>
                         <select class="form-select" id="order" name="order">
-                            <option value="asc" {% if request.args.get('order') == 'asc' %}selected{% endif %}>Ascending</option>
-                            <option value="desc" {% if request.args.get('order') == 'desc' %}selected{% endif %}>Descending</option>
+                            <option value="asc" {% if current_filters.order == 'asc' %}selected{% endif %}>Ascending</option>
+                            <option value="desc" {% if current_filters.order == 'desc' %}selected{% endif %}>Descending</option>
                         </select>
                     </div>
-
+            
                     <div class="filter-actions">
                         <button type="submit" class="btn btn-primary">Apply Filters</button>
                         <a href="{{ url_for('main.index') }}" class="btn btn-secondary">Clear Filters</a>
@@ -114,6 +92,9 @@
                 </form>
             </div>
         </div>
+
+
+
 
         <div class="products-container">
             <form id="compare-form" action="{{ url_for('main.compare') }}" method="get">
@@ -146,6 +127,23 @@
                 </div>
             </form>
 
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.brand }}</p>
+                            <p class="card-text">${{ "%.2f"|format(product.price) }}</p>
+                            <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-primary">View Details</a>
+                            <button class="btn btn-secondary quick-view" data-product-id="{{ product.id }}">Quick View</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
             <!-- Pagination -->
             {% if pagination.pages > 1 %}
             <nav aria-label="Page navigation" class="mt-4">
@@ -191,7 +189,6 @@
 {{ super() }}
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 {% endblock %}
-
 
 
 

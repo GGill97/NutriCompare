@@ -1,8 +1,7 @@
-from flask import render_template, request, current_app, url_for, redirect, jsonify
+from flask import render_template, request, current_app, url_for, redirect, jsonify, flash
 from app.main import bp
-from app.models import Product, db, User
+from app.models import Product, db
 from sqlalchemy import or_, func, and_
-from flask_login import current_user, login_required
 
 @bp.route('/')
 @bp.route('/index')
@@ -10,43 +9,40 @@ def index():
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['PRODUCTS_PER_PAGE']
 
-    # Get filter parameters
-    brand = request.args.get('brand')
-    category = request.args.getlist('category')
-    price_ranges = request.args.getlist('price_range')
-    protein_ranges = request.args.getlist('protein_range')
-    search_query = request.args.get('search')
-
-    # Get sort parameter
-    sort = request.args.get('sort', 'name')
-    order = request.args.get('order', 'asc')
-
     # Base query
     query = Product.query
 
     # Apply filters
+    brand = request.args.get('brand')
+    categories = request.args.getlist('category')
+    price_range = request.args.get('price_range')
+    protein_range = request.args.get('protein_range')
+    search_query = request.args.get('search')
+
     if brand:
         query = query.filter(Product.brand == brand)
-    if category:
-        query = query.filter(Product.type.in_(category))
-    if price_ranges:
-        price_conditions = []
-        for range in price_ranges:
-            if range == '45+':
-                price_conditions.append(Product.price >= 45)
-            else:
-                min_price, max_price = map(float, range.split('-'))
-                price_conditions.append(and_(Product.price >= min_price, Product.price < max_price))
-        query = query.filter(or_(*price_conditions))
-    if protein_ranges:
-        protein_conditions = []
-        for range in protein_ranges:
-            if range == '25+':
-                protein_conditions.append(Product.protein_per_serving >= 25)
-            else:
-                min_protein, max_protein = map(float, range.split('-'))
-                protein_conditions.append(and_(Product.protein_per_serving >= min_protein, Product.protein_per_serving < max_protein))
-        query = query.filter(or_(*protein_conditions))
+
+    if categories:
+        query = query.filter(Product.type.in_(categories))
+
+    if price_range:
+        if price_range == '0-20':
+            query = query.filter(and_(Product.price >= 0, Product.price < 20))
+        elif price_range == '20-40':
+            query = query.filter(and_(Product.price >= 20, Product.price < 40))
+        elif price_range == '40-60':
+            query = query.filter(and_(Product.price >= 40, Product.price < 60))
+        elif price_range == '60+':
+            query = query.filter(Product.price >= 60)
+
+    if protein_range:
+        if protein_range == '0-15':
+            query = query.filter(and_(Product.protein_per_serving >= 0, Product.protein_per_serving < 15))
+        elif protein_range == '15-25':
+            query = query.filter(and_(Product.protein_per_serving >= 15, Product.protein_per_serving < 25))
+        elif protein_range == '25+':
+            query = query.filter(Product.protein_per_serving >= 25)
+
     if search_query:
         search = f"%{search_query}%"
         query = query.filter(or_(
@@ -56,6 +52,9 @@ def index():
         ))
 
     # Apply sorting
+    sort = request.args.get('sort', 'name')
+    order = request.args.get('order', 'asc')
+
     if sort == 'price':
         query = query.order_by(Product.price.asc() if order == 'asc' else Product.price.desc())
     elif sort == 'protein':
@@ -63,11 +62,12 @@ def index():
     else:
         query = query.order_by(Product.name.asc() if order == 'asc' else Product.name.desc())
 
+    # Paginate results
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+
     # Get unique brands and categories for filter options
     brands = db.session.query(Product.brand).distinct().order_by(Product.brand)
     categories = db.session.query(Product.type).distinct().order_by(Product.type)
-    
-    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
 
     return render_template('index.html', 
                            pagination=pagination,
@@ -75,9 +75,9 @@ def index():
                            categories=categories,
                            current_filters={
                                'brand': brand,
-                               'category': category,
-                               'price_range': price_ranges,
-                               'protein_range': protein_ranges,
+                               'category': categories,
+                               'price_range': price_range,
+                               'protein_range': protein_range,
                                'sort': sort,
                                'order': order,
                                'search': search_query
@@ -92,32 +92,38 @@ def product_detail(id):
     ).order_by(func.random()).limit(3).all()
     return render_template('product_detail.html', title=product.name, product=product, similar_products=similar_products)
 
+
 @bp.route('/compare')
 def compare():
     product_ids = request.args.getlist('products')
-    if len(product_ids) < 2 or len(product_ids) > 4:
+    
+    if len(product_ids) < 2:
+        flash('Please select at least two products to compare.', 'warning')
         return redirect(url_for('main.index'))
 
     products_to_compare = Product.query.filter(Product.id.in_(product_ids)).all()
-    return render_template('compare.html', products=products_to_compare)
 
-# @bp.route('/favorite/<int:product_id>', methods=['POST'])
-# @login_required
-# def favorite_product(product_id):
-#     product = Product.query.get_or_404(product_id)
-#     if product in current_user.favorites:
-#         current_user.favorites.remove(product)
-#         db.session.commit()
-#         return jsonify({'status': 'removed'})
-#     else:
-#         current_user.favorites.append(product)
-#         db.session.commit()
-#         return jsonify({'status': 'added'})
+    if len(products_to_compare) != len(product_ids):
+        flash('One or more selected products could not be found.', 'error')
+        return redirect(url_for('main.index'))
 
-# @bp.route('/favorites')
-# @login_required
-# def favorites():
-#     return render_template('favorites.html', favorites=current_user.favorites)
+    # Prepare data for charts
+    chart_data = {
+        'labels': [product.name for product in products_to_compare],
+        'protein': [product.protein_per_serving for product in products_to_compare],
+        'carbs': [product.carbohydrates for product in products_to_compare],
+        'fat': [product.fats for product in products_to_compare],
+        'sugar': [product.sugar for product in products_to_compare],
+        'fiber': [product.dietary_fiber for product in products_to_compare],
+        'calories': [product.calories for product in products_to_compare],
+        'sodium': [product.sodium for product in products_to_compare],
+        'cholesterol': [product.cholesterol for product in products_to_compare]
+    }
+
+    return render_template('compare.html', 
+                           products=products_to_compare, 
+                           chart_data=chart_data)
+
 
 @bp.route('/search')
 def search():
@@ -132,16 +138,3 @@ def search():
         return jsonify([{'id': p.id, 'name': p.name, 'brand': p.brand} for p in products])
     return jsonify([])
 
-@bp.route('/protein-calculator')
-def protein_calculator():
-    return render_template('protein_calculator.html')
-
-@bp.route('/api/price-history/<int:product_id>')
-def price_history(product_id):
-    # This is a placeholder. You would need to implement actual price tracking.
-    return jsonify([
-        {'date': '2023-01-01', 'price': 29.99},
-        {'date': '2023-02-01', 'price': 27.99},
-        {'date': '2023-03-01', 'price': 31.99},
-        {'date': '2023-04-01', 'price': 28.99},
-    ])
