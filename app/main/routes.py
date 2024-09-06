@@ -3,6 +3,7 @@ from app.main import bp
 from app.models import Product, db
 from sqlalchemy import or_, func, and_
 
+
 @bp.route('/')
 @bp.route('/index')
 def index():

@@ -1,6 +1,5 @@
 from flask import render_template, redirect, url_for, flash, request, current_app
-from flask_login import login_required, current_user, login_user, logout_user
-# from werkzeug.security import check_password_hash
+from flask_login import login_required, login_user, logout_user
 from app import db
 from app.admin import bp
 from app.models import Product, Category, Admin
@@ -17,30 +16,40 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 def save_product_image(file):
+    logging.info(f"Attempting to save image: {file.filename}")
     if file and file.filename != '' and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         upload_dir = os.path.join(current_app.root_path, 'static', 'images')
+        logging.info(f"Upload directory: {upload_dir}")
         
-        if not os.path.exists(upload_dir):
-            try:
-                os.makedirs(upload_dir)
-            except OSError as e:
-                logging.error(f"Error creating directory: {str(e)}")
-                return None
+        # Ensure the upload directory exists
+        os.makedirs(upload_dir, exist_ok=True)
+        logging.info(f"Ensured directory exists: {upload_dir}")
+        
+        # Generate a unique filename
+        base, extension = os.path.splitext(filename)
+        counter = 1
+        while os.path.exists(os.path.join(upload_dir, filename)):
+            filename = f"{base}_{counter}{extension}"
+            counter += 1
         
         file_path = os.path.join(upload_dir, filename)
-        logging.debug(f"Saving file to: {file_path}")
+        logging.info(f"Attempting to save file to: {file_path}")
         
         try:
             file.save(file_path)
-            logging.debug("File saved successfully")
+            logging.info(f"File saved successfully: {file_path}")
             return f'/static/images/{filename}'
         except Exception as e:
-            logging.error(f"Error saving file: {str(e)}")
+            logging.error(f"Error saving file: {str(e)}", exc_info=True)
             return None
-    return None
-
+    else:
+        logging.warning(f"Invalid file or filename: {file.filename}")
+        return None
+    
+    
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -65,11 +74,16 @@ def logout():
 def index():
     products = Product.query.all()
     return render_template('admin/index.html', products=products)
+    pass
+
 
 @bp.route('/product/create', methods=['GET', 'POST'])
 @login_required
 def create_new_product():
     if request.method == 'POST':
+        logging.info("Received POST request to create new product")
+        logging.debug(f"Form data: {request.form}")
+        logging.debug(f"Files: {request.files}")
         category = Category.query.filter_by(name=request.form['type']).first()
         if not category:
             category = Category(name=request.form['type'])
@@ -124,8 +138,12 @@ def create_new_product():
 @bp.route('/product/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_product(id):
+    logging.info(f"Editing product with id: {id}")
     product = Product.query.get_or_404(id)
     if request.method == 'POST':
+        logging.info("Received POST request to edit product")
+        logging.debug(f"Form data: {request.form}")
+        logging.debug(f"Files: {request.files}")
         category = Category.query.filter_by(name=request.form['type']).first()
         if not category:
             category = Category(name=request.form['type'])

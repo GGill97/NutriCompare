@@ -44,8 +44,25 @@ class Product(db.Model):
     def __repr__(self):
         return f'<Product {self.name}>'
     
-class Admin(db.Model):
+class Admin(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     # Add other fields as needed
+    def __repr__(self):
+        return f'<Admin {self.username}>'
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return str(self.id)

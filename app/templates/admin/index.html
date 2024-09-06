@@ -7,6 +7,7 @@
   <thead>
     <tr>
       <th>ID</th>
+      <th>Image</th>
       <th>Name</th>
       <th>Brand</th>
       <th>Type</th>
@@ -19,6 +20,14 @@
     {% for product in products %}
     <tr>
       <td>{{ product.id }}</td>
+      <td>
+        {% if product.image_url %}
+          <img src="{{ product.image_url }}" alt="{{ product.name }}" style="max-width: 50px; max-height: 50px;">
+        {% else %}
+          No image
+        {% endif %}
+      </td>
+
       <td>{{ product.name }}</td>
       <td>{{ product.brand }}</td>
       <td>{{ product.type }}</td>
