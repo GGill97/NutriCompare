@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}Protein Powder Comparison{% endblock %}</title>
+    <title>{% block title %}NutriCompare{% endblock %}</title>
     <meta
       name="description"
-      content="Compare protein powders to find the best one for your needs."
+      content="{% block meta_description %}Compare protein powders to find the best one for your needs.{% endblock %}"
     />
     <meta name="theme-color" content="#4ECDC4" />
     <link
@@ -21,6 +21,10 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"
+    />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     {% block extra_css %}{% endblock %}
   </head>
@@ -28,7 +32,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container">
         <a class="navbar-brand" href="{{ url_for('main.index') }}"
-          >Protein Powder Comparison</a
+          >Protein Powder Insights</a
         >
         <button
           class="navbar-toggler"
@@ -66,6 +70,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    {% block scripts %}{% endblock %}
+    {% block scripts %}{% endblock %} {% block page_scripts %}{% endblock %}
   </body>
 </html>

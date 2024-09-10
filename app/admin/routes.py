@@ -6,7 +6,7 @@ from app.models import Product, Category, Admin
 from werkzeug.utils import secure_filename 
 import os
 import logging 
-
+from sqlalchemy import or_
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -72,10 +72,20 @@ def logout():
 @bp.route('/')
 @login_required
 def index():
-    products = Product.query.all()
-    return render_template('admin/index.html', products=products)
-    pass
+    search_query = request.args.get('search', '')
+    if search_query:
+        products = Product.query.filter(
+            or_(
+                Product.name.ilike(f'%{search_query}%'),
+                Product.brand.ilike(f'%{search_query}%'),
+                Product.type.ilike(f'%{search_query}%')
+            )
+        ).all()
+    else:
+        products = Product.query.all()
+    return render_template('admin/index.html', products=products, search_query=search_query)
 
+# ... (keep existing imports and other functions)
 
 @bp.route('/product/create', methods=['GET', 'POST'])
 @login_required
@@ -84,6 +94,7 @@ def create_new_product():
         logging.info("Received POST request to create new product")
         logging.debug(f"Form data: {request.form}")
         logging.debug(f"Files: {request.files}")
+        
         category = Category.query.filter_by(name=request.form['type']).first()
         if not category:
             category = Category(name=request.form['type'])
@@ -93,8 +104,24 @@ def create_new_product():
             name=request.form['name'],
             brand=request.form['brand'],
             type=request.form['type'],
+            flavor=request.form.get('flavor'),
+            ingredients=request.form.get('ingredients'),
             protein_per_serving=float(request.form['protein_per_serving']),
+            calories=int(request.form['calories']) if request.form.get('calories') else None,
+            sugar=float(request.form['sugar']) if request.form.get('sugar') else None,
+            carbohydrates=float(request.form['carbohydrates']) if request.form.get('carbohydrates') else None,
+            fats=float(request.form['fats']) if request.form.get('fats') else None,
+            saturated_fats=float(request.form['saturated_fats']) if request.form.get('saturated_fats') else None,
+            cholesterol=float(request.form['cholesterol']) if request.form.get('cholesterol') else None,
+            sodium=float(request.form['sodium']) if request.form.get('sodium') else None,
+            dietary_fiber=float(request.form['dietary_fiber']) if request.form.get('dietary_fiber') else None,
             price=float(request.form['price']),
+            serving_size=request.form.get('serving_size'),
+            servings_per_container=int(request.form['servings_per_container']) if request.form.get('servings_per_container') else None,
+            flavors=request.form.get('flavors'),
+            allergens=request.form.get('allergens'),
+            description=request.form.get('description'),
+            source=request.form.get('source'),
             category=category
         )
         
@@ -144,6 +171,7 @@ def edit_product(id):
         logging.info("Received POST request to edit product")
         logging.debug(f"Form data: {request.form}")
         logging.debug(f"Files: {request.files}")
+        
         category = Category.query.filter_by(name=request.form['type']).first()
         if not category:
             category = Category(name=request.form['type'])
@@ -152,8 +180,24 @@ def edit_product(id):
         product.name = request.form['name']
         product.brand = request.form['brand']
         product.type = request.form['type']
+        product.flavor = request.form.get('flavor')
+        product.ingredients = request.form.get('ingredients')
         product.protein_per_serving = float(request.form['protein_per_serving'])
+        product.calories = int(request.form['calories']) if request.form.get('calories') else None
+        product.sugar = float(request.form['sugar']) if request.form.get('sugar') else None
+        product.carbohydrates = float(request.form['carbohydrates']) if request.form.get('carbohydrates') else None
+        product.fats = float(request.form['fats']) if request.form.get('fats') else None
+        product.saturated_fats = float(request.form['saturated_fats']) if request.form.get('saturated_fats') else None
+        product.cholesterol = float(request.form['cholesterol']) if request.form.get('cholesterol') else None
+        product.sodium = float(request.form['sodium']) if request.form.get('sodium') else None
+        product.dietary_fiber = float(request.form['dietary_fiber']) if request.form.get('dietary_fiber') else None
         product.price = float(request.form['price'])
+        product.serving_size = request.form.get('serving_size')
+        product.servings_per_container = int(request.form['servings_per_container']) if request.form.get('servings_per_container') else None
+        product.flavors = request.form.get('flavors')
+        product.allergens = request.form.get('allergens')
+        product.description = request.form.get('description')
+        product.source = request.form.get('source')
         product.category = category
         
         if 'image' in request.files:
@@ -180,6 +224,8 @@ def edit_product(id):
     
     categories = Category.query.all()
     return render_template('admin/product_form.html', product=product, categories=categories)
+
+
 
 @bp.route('/product/<int:id>/delete', methods=['POST'])
 @login_required

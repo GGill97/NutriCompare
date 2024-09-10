@@ -1,226 +1,180 @@
 {% extends "base.html" %}
 
-{% block styles %}
-{{ super() }}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-{% endblock %}
-
 {% block content %}
 <div class="container mt-4">
-    <h1 class="text-center mb-4">Protein Powder Comparison</h1>
+  <h1 class="text-center mb-4">NutriCompare: Discover Your Ideal Protein Powder</h1>
 
-    <div class="main-content">
-        <div class="sidebar">
-            <div class="filter-container">
-                <h2>Filters</h2>
-                <form id="filter-form" method="GET" action="{{ url_for('main.index') }}">
-                    <!-- Search filter -->
-                    <div class="filter-section">
-                        <label for="search">Search</label>
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" id="search" name="search" placeholder="Search products..." value="{{ current_filters.search or '' }}">
-                            <button class="btn btn-outline-secondary" type="submit">Search</button>
-                        </div>
-                    </div>
-            
-                    <!-- Brand filter -->
-                    <div class="filter-section">
-                        <label for="brand">Brand</label>
-                        <select class="form-select" id="brand" name="brand">
-                            <option value="">All Brands</option>
-                            {% for brand in brands %}
-                                <option value="{{ brand[0] }}" {% if current_filters.brand == brand[0] %}selected{% endif %}>{{ brand[0] }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-            
-                    <!-- Category filter -->
-                    <div class="filter-section">
-                        <label for="category">Product Types</label>
-                        <select class="form-select" id="category" name="category" multiple>
-                            {% for category in categories %}
-                                <option value="{{ category[0] }}" {% if category[0] in current_filters.category %}selected{% endif %}>{{ category[0] }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-            
-                    <!-- Price Range filter (dropdown) -->
-                    <div class="filter-section">
-                        <label for="price-range">Price Range</label>
-                        <select class="form-select" id="price-range" name="price_range">
-                            <option value="">All Prices</option>
-                            <option value="0-20" {% if current_filters.price_range == '0-20' %}selected{% endif %}>$0 - $20</option>
-                            <option value="20-40" {% if current_filters.price_range == '20-40' %}selected{% endif %}>$20 - $40</option>
-                            <option value="40-60" {% if current_filters.price_range == '40-60' %}selected{% endif %}>$40 - $60</option>
-                            <option value="60+" {% if current_filters.price_range == '60+' %}selected{% endif %}>$60+</option>
-                        </select>
-                    </div>
-            
-                    <!-- Protein Content filter (dropdown) -->
-                    <div class="filter-section">
-                        <label for="protein-range">Protein Content</label>
-                        <select class="form-select" id="protein-range" name="protein_range">
-                            <option value="">All Protein Levels</option>
-                            <option value="0-15" {% if current_filters.protein_range == '0-15' %}selected{% endif %}>0 - 15g per serving</option>
-                            <option value="15-25" {% if current_filters.protein_range == '15-25' %}selected{% endif %}>15 - 25g per serving</option>
-                            <option value="25+" {% if current_filters.protein_range == '25+' %}selected{% endif %}>25g+ per serving</option>
-                        </select>
-                    </div>
-            
-                    <!-- Sort and Order filters -->
-                    <div class="filter-section">
-                        <label for="sort">Sort By</label>
-                        <select class="form-select" id="sort" name="sort">
-                            <option value="name" {% if current_filters.sort == 'name' %}selected{% endif %}>Name</option>
-                            <option value="price" {% if current_filters.sort == 'price' %}selected{% endif %}>Price</option>
-                            <option value="protein" {% if current_filters.sort == 'protein' %}selected{% endif %}>Protein Content</option>
-                        </select>
-                    </div>
-            
-                    <div class="filter-section">
-                        <label for="order">Order</label>
-                        <select class="form-select" id="order" name="order">
-                            <option value="asc" {% if current_filters.order == 'asc' %}selected{% endif %}>Ascending</option>
-                            <option value="desc" {% if current_filters.order == 'desc' %}selected{% endif %}>Descending</option>
-                        </select>
-                    </div>
-            
-                    <div class="filter-actions">
-                        <button type="submit" class="btn btn-primary">Apply Filters</button>
-                        <a href="{{ url_for('main.index') }}" class="btn btn-secondary">Clear Filters</a>
-                    </div>
-                </form>
+  <div class="main-content">
+    <div class="sidebar">
+      <div class="filter-container">
+        <h2>Filters</h2>
+        <form id="filter-form" method="GET" action="{{ url_for('main.index') }}">
+          <!-- Search filter -->
+          <div class="filter-section">
+            <label for="search">Search</label>
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" id="search" name="search" placeholder="Search products..." value="{{ current_filters.search or '' }}">
+              <button class="btn btn-outline-secondary" type="submit">Search</button>
             </div>
-        </div>
+          </div>
 
+          <!-- Brand filter -->
+          <div class="filter-section">
+            <label for="brand">Brand</label>
+            <select class="form-select" id="brand" name="brand">
+              <option value="">All Brands</option>
+              {% for brand in brands %}
+                <option value="{{ brand[0] }}" {% if current_filters.brand == brand[0] %}selected{% endif %}>{{ brand[0] }}</option>
+              {% endfor %}
+            </select>
+          </div>
 
+          <!-- Category filter -->
+          <div class="filter-section">
+            <label for="category">Product Types</label>
+            <select class="form-select" id="category" name="category" multiple>
+              {% for category in categories %}
+                <option value="{{ category[0] }}" {% if category[0] in current_filters.category %}selected{% endif %}>{{ category[0] }}</option>
+              {% endfor %}
+            </select>
+          </div>
 
+          <!-- Price Range filter -->
+          <div class="filter-section">
+            <label for="price-range">Price Range</label>
+            <select class="form-select" id="price-range" name="price_range">
+              <option value="">All Prices</option>
+              <option value="0-20" {% if current_filters.price_range == '0-20' %}selected{% endif %}>$0 - $20</option>
+              <option value="20-40" {% if current_filters.price_range == '20-40' %}selected{% endif %}>$20 - $40</option>
+              <option value="40-60" {% if current_filters.price_range == '40-60' %}selected{% endif %}>$40 - $60</option>
+              <option value="60+" {% if current_filters.price_range == '60+' %}selected{% endif %}>$60+</option>
+            </select>
+          </div>
 
-        <div class="products-container">
-            <form id="compare-form" action="{{ url_for('main.compare') }}" method="get">
-                <div class="product-grid">
-                    {% for product in pagination.items %}
-                    <div class="product-card">
-                        <div class="product-card-body">
-                             <!-- CHANGED: Added product image display -->
-                             <div class="product-image">
-                                {% if product.image_url %}
-                                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-fluid">
-                                {% else %}
-                                    <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available" class="img-fluid">
-                                {% endif %}
-                            </div>
-                            <h5 class="product-title">{{ product.name }}</h5>
-                            <p class="product-brand">{{ product.brand }}</p>
-                            <p class="product-details">
-                                <strong>Type:</strong> {{ product.type }}<br>
-                                <strong>Protein:</strong> {{ product.protein_per_serving }}g per serving
-                            </p>
-                            <p class="product-price">${{ "%.2f"|format(product.price) }}</p>
-                            <div class="product-actions">
-                                <div class="form-check">
-                                    <input class="form-check-input compare-checkbox" type="checkbox" name="products" value="{{ product.id }}" id="compare-{{ product.id }}">
-                                    <label class="form-check-label" for="compare-{{ product.id }}">
-                                        Compare
-                                    </label>
-                                </div>
-                                <a href="{{ url_for('main.product_detail', id=product.id) }}" class="btn btn-primary btn-sm btn-view-details">View Details</a>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div id="compare-button" class="text-center mt-3 d-none">
-                    <button type="submit" class="btn btn-success">Compare Selected Products</button>
-                </div>
-            </form>
+          <!-- Protein Content filter -->
+          <div class="filter-section">
+            <label for="protein-range">Protein Content</label>
+            <select class="form-select" id="protein-range" name="protein_range">
+              <option value="">All Protein Levels</option>
+              <option value="0-15" {% if current_filters.protein_range == '0-15' %}selected{% endif %}>0 - 15g per serving</option>
+              <option value="15-25" {% if current_filters.protein_range == '15-25' %}selected{% endif %}>15 - 25g per serving</option>
+              <option value="25+" {% if current_filters.protein_range == '25+' %}selected{% endif %}>25g+ per serving</option>
+            </select>
+          </div>
 
-            <div class="row">
-                {% for product in products %}
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ product.name }}</h5>
-                            <p class="card-text">{{ product.brand }}</p>
-                            <p class="card-text">${{ "%.2f"|format(product.price) }}</p>
-                            <a href="{{ url_for('main.product_detail', product_id=product.id) }}" class="btn btn-primary">View Details</a>
-                            <button class="btn btn-secondary quick-view" data-product-id="{{ product.id }}">Quick View</button>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            
-            <!-- Pagination -->
-            {% if pagination.pages > 1 %}
-            <nav aria-label="Page navigation" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    {% if pagination.has_prev %}
-                        <li class="page-item">
-                            <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=pagination.prev_num)) }}">&laquo; Previous</a>
-                        </li>
-                    {% endif %}
+          <!-- Sort and Order filters -->
+          <div class="filter-section">
+            <label for="sort">Sort By</label>
+            <select class="form-select" id="sort" name="sort">
+              <option value="name" {% if current_filters.sort == 'name' %}selected{% endif %}>Name</option>
+              <option value="price" {% if current_filters.sort == 'price' %}selected{% endif %}>Price</option>
+              <option value="protein" {% if current_filters.sort == 'protein' %}selected{% endif %}>Protein Content</option>
+            </select>
+          </div>
 
-                    {% for page in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
-                        {% if page %}
-                            {% if page != pagination.page %}
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=page)) }}">{{ page }}</a>
-                                </li>
-                            {% else %}
-                                <li class="page-item active">
-                                    <span class="page-link">{{ page }}</span>
-                                </li>
-                            {% endif %}
-                        {% else %}
-                            <li class="page-item disabled">
-                                <span class="page-link">...</span>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
+          <div class="filter-section">
+            <label for="order">Order</label>
+            <select class="form-select" id="order" name="order">
+              <option value="asc" {% if current_filters.order == 'asc' %}selected{% endif %}>Ascending</option>
+              <option value="desc" {% if current_filters.order == 'desc' %}selected{% endif %}>Descending</option>
+            </select>
+          </div>
 
-                    {% if pagination.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=pagination.next_num)) }}">Next &raquo;</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
-            {% endif %}
-        </div>
+          <div class="filter-actions">
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+            <a href="{{ url_for('main.index') }}" class="btn btn-secondary">Clear Filters</a>
+          </div>
+        </form>
+      </div>
     </div>
+
+
+
+
+
+
+    
+    <div class="products-container">
+      <form id="compare-form" action="{{ url_for('main.compare') }}" method="get">
+        <div class="product-grid">
+          {% for product in pagination.items %}
+          <div class="product-card">
+            <div class="product-card-body">
+              <div class="product-image-container">
+                {% if product.image_url %}
+                  <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+                {% else %}
+                  <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available" class="product-image">
+                {% endif %}
+              </div>
+              <h5 class="product-title">{{ product.name }}</h5>
+              <p class="product-brand">{{ product.brand }}</p>
+              <p class="product-details">
+                <strong>Type:</strong> {{ product.type }}<br>
+                <strong>Protein:</strong> {{ product.protein_per_serving }}g per serving
+              </p>
+              <p class="product-price">${{ "%.2f"|format(product.price) }}</p>
+              <div class="product-actions">
+                <div class="form-check">
+                  <input class="form-check-input compare-checkbox" type="checkbox" name="products" value="{{ product.id }}" id="compare-{{ product.id }}">
+                  <label class="form-check-label" for="compare-{{ product.id }}">
+                    Compare
+                  </label>
+                </div>
+                <a href="{{ url_for('main.product_detail', id=product.id) }}" class="btn btn-primary btn-sm btn-view-details">View Details</a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div id="compare-button" class="compare-button" style="display: none;">
+          <div id="compare-badges" class="compare-badges"></div>
+          <button type="submit" class="btn btn-success">Compare Selected Products</button>
+        </div>
+      </form>
+
+      <!-- Pagination -->
+      {% if pagination.pages > 1 %}
+      <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if pagination.has_prev %}
+            <li class="page-item">
+              <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=pagination.prev_num)) }}">&laquo; Previous</a>
+            </li>
+          {% endif %}
+
+          {% for page in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+            {% if page %}
+              {% if page != pagination.page %}
+                <li class="page-item">
+                  <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=page)) }}">{{ page }}</a>
+                </li>
+              {% else %}
+                <li class="page-item active">
+                  <span class="page-link">{{ page }}</span>
+                </li>
+              {% endif %}
+            {% else %}
+              <li class="page-item disabled">
+                <span class="page-link">...</span>
+              </li>
+            {% endif %}
+          {% endfor %}
+
+          {% if pagination.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=pagination.next_num)) }}">Next &raquo;</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+    </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

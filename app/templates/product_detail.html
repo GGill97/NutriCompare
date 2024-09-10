@@ -1,188 +1,195 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+
+{% block content %}
 <div class="container mt-4">
+  <div class="row mb-3">
+    <div class="col">
+      <a href="{{ url_for('main.index') }}" class="btn btn-secondary">Back to List</a>
+    </div>
+  </div>
   <div class="row">
-    <div class="col-lg-8 offset-lg-2">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <a href="{{ url_for('main.index') }}">Protein List</a>
-          </li>
-          <li class="breadcrumb-item active" aria-current="page">
-            {{ product.name }}
-          </li>
-        </ol>
-      </nav>
+    <div class="col-md-6">
+      <div class="product-image-container">
+        {% if product.image_url %}
+          <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image" id="product-image">
+        {% else %}
+          <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available" class="product-image">
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-md-6">
+      <h1 class="product-title">{{ product.name }}</h1>
+      <p class="product-brand">{{ product.brand }} | {{ product.type }}</p>
+      <h2 class="product-price">${{ "%.2f"|format(product.price) }}</h2>
 
-      <h1 class="mb-4">{{ product.name }}</h1>
+      <div class="quick-info card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Quick Info</h5>
+          <ul class="list-unstyled">
+            <li><strong>Protein:</strong> {{ product.protein_per_serving }}g per serving</li>
+            <li><strong>Calories:</strong> {{ product.calories }}</li>
+            <li><strong>Serving Size:</strong> {{ product.serving_size }}</li>
+            <li><strong>Servings Per Container:</strong> {{ product.servings_per_container }}</li>
+          </ul>
+        </div>
+      </div>
 
-      <!-- Product Image Carousel -->
-      <div
-        id="productCarousel"
-        class="carousel slide mb-4"
-        data-bs-ride="carousel"
+      <button
+        id="add-to-compare"
+        class="btn btn-primary mb-3"
+        data-product-id="{{ product.id }}"
       >
-        <div class="carousel-inner">
-          {% for image in product.images %}
-          <div class="carousel-item {% if loop.first %}active{% endif %}">
-            <img
-              src="{{ image }}"
-              class="d-block w-100"
-              alt="{{ product.name }}"
-            />
-          </div>
-          {% endfor %}
-        </div>
-        <button
-          class="carousel-control-prev"
-          type="button"
-          data-bs-target="#productCarousel"
-          data-bs-slide="prev"
+        Add to Compare
+      </button>
+    </div>
+  </div>
+
+  <!-- Product Details Accordion -->
+  <div class="product-details mt-4">
+    <div class="accordion" id="productAccordion">
+      <!-- Nutritional Information Section -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingNutrition">
+          <button
+            class="accordion-button"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseNutrition"
+            aria-expanded="true"
+            aria-controls="collapseNutrition"
+          >
+            Nutritional Information
+          </button>
+        </h2>
+        <div
+          id="collapseNutrition"
+          class="accordion-collapse collapse show"
+          aria-labelledby="headingNutrition"
+          data-bs-parent="#productAccordion"
         >
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button
-          class="carousel-control-next"
-          type="button"
-          data-bs-target="#productCarousel"
-          data-bs-slide="next"
-        >
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-      </div>
-
-      <!-- Product Details -->
-      <div class="card mb-4">
-        <div class="card-body">
-          <h2 class="card-title">Product Details</h2>
-          <ul class="list-unstyled">
-            <li>
-              <i class="bi bi-tag-fill"></i> <strong>Type:</strong> {{
-              product.type|default('Not specified') }}
-            </li>
-            <li>
-              <i class="bi bi-currency-dollar"></i> <strong>Price:</strong> ${{
-              "%.2f"|format(product.price|default(0)) }}
-            </li>
-            <li>
-              <i class="bi bi-box-seam"></i> <strong>Serving Size:</strong> {{
-              product.serving_size|default(0) }}g
-            </li>
-            <li>
-              <i class="bi bi-archive"></i>
-              <strong>Servings Per Container:</strong> {{
-              product.servings_per_container|default(0) }}
-            </li>
-            <li>
-              <i class="bi bi-palette"></i> <strong>Flavors:</strong> {{
-              product.flavors|default('Not specified') }}
-            </li>
-            <li>
-              <i class="bi bi-exclamation-triangle"></i>
-              <strong>Allergens:</strong> {{ product.allergens|default('None')
-              }}
-            </li>
-          </ul>
-          {% if product.description %}
-          <p class="card-text">{{ product.description }}</p>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Nutritional Information -->
-      <div class="card mb-4">
-        <div class="card-body">
-          <h2 class="card-title">Nutritional Information</h2>
-          <ul class="list-unstyled">
-            <li>
-              <i class="bi bi-egg-fried"></i> <strong>Protein:</strong> {{
-              product.protein_per_serving|default(0, true) }}g per serving
-            </li>
-            <li>
-              <i class="bi bi-bread"></i> <strong>Carbohydrates:</strong> {{
-              product.carbs_per_serving|default(0, true) }}g per serving
-            </li>
-            <li>
-              <i class="bi bi-droplet"></i> <strong>Fats:</strong> {{
-              product.fats_per_serving|default(0, true) }}g per serving
-            </li>
-            <li>
-              <i class="bi bi-cup"></i> <strong>Sugar:</strong> {{
-              product.sugar_per_serving|default(0, true) }}g per serving
-            </li>
-            <li>
-              <i class="bi bi-lightning"></i> <strong>Calories:</strong> {{
-              product.calories_per_serving|default(0, true) }} per serving
-            </li>
-          </ul>
-          {% if product.other_nutrients %}
-          <p>{{ product.other_nutrients }}</p>
-          {% endif %}
-        </div>
-      </div>
-
-      <!-- Ingredients -->
-      <div class="card mb-4">
-        <div class="card-body">
-          <h2 class="card-title">Ingredients</h2>
-          <p>
-            <strong>Primary Protein Source:</strong> {{
-            product.primary_protein_source }}
-          </p>
-          <p>
-            <strong>Other Ingredients:</strong> {{ product.other_ingredients }}
-          </p>
-        </div>
-      </div>
-
-      <!-- User Reviews -->
-      <div class="card mb-4">
-        <div class="card-body">
-          <h2 class="card-title">User Reviews</h2>
-          <!-- Add your review system here -->
-          <p>No reviews yet. Be the first to review this product!</p>
-        </div>
-      </div>
-
-      <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
-        <a href="{{ url_for('main.index') }}" class="btn btn-primary"
-          ><i class="bi bi-arrow-left"></i> Back to Protein List</a
-        >
-        <a
-          href="{{ url_for('main.compare', products=product.id) }}"
-          class="btn btn-secondary"
-          >Compare This Product <i class="bi bi-bar-chart"></i
-        ></a>
-      </div>
-
-      <!-- Related Products -->
-      <h2 class="mt-5 mb-4">Related Products</h2>
-      <div class="row">
-        {% for related_product in related_products %}
-        <div class="col-md-4 mb-4">
-          <div class="card h-100">
-            <img
-              src="{{ related_product.image }}"
-              class="card-img-top"
-              alt="{{ related_product.name }}"
-            />
-            <div class="card-body d-flex flex-column">
-              <h5 class="card-title">{{ related_product.name }}</h5>
-              <p class="card-text">
-                ${{ "%.2f"|format(related_product.price) }}
-              </p>
-              <a
-                href="{{ url_for('main.product_detail', id=related_product.id) }}"
-                class="btn btn-primary btn-sm mt-auto"
-                >View Details</a
-              >
-            </div>
+          <div class="accordion-body">
+            <ul class="list-unstyled">
+              <li>
+                <strong>Protein:</strong> {{ product.protein_per_serving }}g
+              </li>
+              <li>
+                <strong>Carbohydrates:</strong> {{ product.carbohydrates }}g
+              </li>
+              <li><strong>Fats:</strong> {{ product.fats }}g</li>
+              <li>
+                <strong>Saturated Fats:</strong> {{ product.saturated_fats }}g
+              </li>
+              <li><strong>Sugar:</strong> {{ product.sugar }}g</li>
+              <li><strong>Cholesterol:</strong> {{ product.cholesterol }}mg</li>
+              <li><strong>Sodium:</strong> {{ product.sodium }}mg</li>
+              <li>
+                <strong>Dietary Fiber:</strong> {{ product.dietary_fiber }}g
+              </li>
+            </ul>
           </div>
         </div>
-        {% endfor %}
+      </div>
+
+      <!-- Ingredients Section -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingIngredients">
+          <button
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseIngredients"
+            aria-expanded="false"
+            aria-controls="collapseIngredients"
+          >
+            Ingredients
+          </button>
+        </h2>
+        <div
+          id="collapseIngredients"
+          class="accordion-collapse collapse"
+          aria-labelledby="headingIngredients"
+          data-bs-parent="#productAccordion"
+        >
+          <div class="accordion-body">
+            <p>{{ product.ingredients }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Details Section -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingDetails">
+          <button
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseDetails"
+            aria-expanded="false"
+            aria-controls="collapseDetails"
+          >
+            Additional Details
+          </button>
+        </h2>
+        <div
+          id="collapseDetails"
+          class="accordion-collapse collapse"
+          aria-labelledby="headingDetails"
+          data-bs-parent="#productAccordion"
+        >
+          <div class="accordion-body">
+            <ul class="list-unstyled">
+              <li><strong>Flavor:</strong> {{ product.flavor }}</li>
+              <li><strong>Flavors Available:</strong> {{ product.flavors }}</li>
+              <li><strong>Allergens:</strong> {{ product.allergens }}</li>
+              <li><strong>Description:</strong> {{ product.description }}</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- Source Information -->
+  <div class="source-info mt-4">
+    <h3>Source</h3>
+    <p>
+      <a href="{{ product.source }}" target="_blank" rel="noopener noreferrer"
+        >{{ product.source }}</a
+      >
+    </p>
+  </div>
+
+  <!-- Similar Products Section -->
+  <div class="similar-products mt-4">
+    <h3>Similar Products</h3>
+    <div class="row">
+      {% for similar_product in similar_products %}
+      <div class="col-md-4 mb-3">
+        <div class="product-card">
+          <div class="product-card-body">
+            <div class="product-image-container">
+              <img
+                src="{{ similar_product.image_url or url_for('static', filename='images/placeholder.png') }}"
+                alt="{{ similar_product.name }}"
+                class="product-image"
+              />
+            </div>
+            <h5 class="product-title">{{ similar_product.name }}</h5>
+            <p class="product-price">
+              ${{ "%.2f"|format(similar_product.price) }}
+            </p>
+            <a
+              href="{{ url_for('main.product_detail', id=similar_product.id) }}"
+              class="btn btn-secondary btn-sm btn-view-details"
+              >View Details</a
+            >
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 </div>
+{% endblock %} {% block scripts %} {{ super() }}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}
