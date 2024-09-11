@@ -1,19 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM fully loaded");
 
-  function logElementStatus(id, querySelector = false) {
-    const element = querySelector
-      ? document.querySelector(id)
-      : document.getElementById(id);
-    console.log(`${id}: ${element ? "Found" : "Not found"}`);
-    return element;
-  }
-
-  const compareButton = logElementStatus("compare-button");
-  const compareBadgesContainer = logElementStatus("compare-badges");
+  const compareButton = document.getElementById("compare-button");
+  const compareBadgesContainer = document.getElementById("compare-badges");
   const compareCheckboxes = document.querySelectorAll(".compare-checkbox");
-  const addToCompareBtn = logElementStatus("add-to-compare");
-  console.log(`Compare checkboxes: ${compareCheckboxes.length} found`);
+  const addToCompareBtn = document.getElementById("add-to-compare");
+
+  const MIN_COMPARE_PRODUCTS = 2;
+  const MAX_COMPARE_PRODUCTS = 4;
 
   function updateCompareUI() {
     console.log("Updating Compare UI");
@@ -23,63 +17,73 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (compareButton) {
       compareButton.style.display =
-        compareProducts.length >= 2 ? "block" : "none";
+        compareProducts.length >= MIN_COMPARE_PRODUCTS ? "block" : "none";
+      compareButton.disabled = compareProducts.length < MIN_COMPARE_PRODUCTS;
     }
 
     compareCheckboxes.forEach((checkbox) => {
       const isChecked = compareProducts.some(
-        (product) => product.id === checkbox.value
+        (product) =>
+          (typeof product === "string" && product === checkbox.value) ||
+          (typeof product === "object" && product.id === checkbox.value)
       );
       checkbox.checked = isChecked;
-      console.log(
-        `Checkbox ${checkbox.value}: ${isChecked ? "Checked" : "Unchecked"}`
-      );
+      checkbox.disabled =
+        !isChecked && compareProducts.length >= MAX_COMPARE_PRODUCTS;
     });
 
     if (compareBadgesContainer) {
       compareBadgesContainer.innerHTML = "";
       compareProducts.forEach((product) => {
+        const productId = typeof product === "string" ? product : product.id;
+        const productName =
+          typeof product === "string" ? `Product ${product}` : product.name;
         const badge = document.createElement("div");
         badge.className = "compare-badge";
         badge.innerHTML = `
-          <span>${product.name || `Product ${product.id}`}</span>
-          <button class="remove-compare" data-product-id="${
-            product.id
-          }">&times;</button>
+          <span>${productName}</span>
+          <button class="remove-compare" data-product-id="${productId}">&times;</button>
         `;
         compareBadgesContainer.appendChild(badge);
       });
     }
 
-    // Update "Add to Compare" button on product detail page
     if (addToCompareBtn) {
       const productId = addToCompareBtn.dataset.productId;
       const isInCompare = compareProducts.some(
-        (product) => product.id === productId
+        (product) =>
+          (typeof product === "string" && product === productId) ||
+          (typeof product === "object" && product.id === productId)
       );
       addToCompareBtn.textContent = isInCompare
         ? "Remove from Compare"
         : "Add to Compare";
-      console.log(
-        `Add to Compare button updated: ${addToCompareBtn.textContent}`
-      );
+      addToCompareBtn.disabled =
+        !isInCompare && compareProducts.length >= MAX_COMPARE_PRODUCTS;
     }
   }
 
   function toggleCompareProduct(productId, productName) {
-    console.log("Toggling compare product:", { productId, productName });
     let compareProducts =
       JSON.parse(localStorage.getItem("compareProducts")) || [];
     const index = compareProducts.findIndex(
-      (product) => product.id === productId
+      (product) =>
+        (typeof product === "string" && product === productId) ||
+        (typeof product === "object" && product.id === productId)
     );
 
     if (index > -1) {
       compareProducts.splice(index, 1);
       console.log(`Removed product ${productId} from compare list`);
-    } else {
+    } else if (compareProducts.length < MAX_COMPARE_PRODUCTS) {
       compareProducts.push({ id: productId, name: productName });
       console.log(`Added product ${productId} to compare list`);
+    } else {
+      console.log(`Cannot add product ${productId}. Compare list is full.`);
+      alert(
+        `You can compare up to ${MAX_COMPARE_PRODUCTS} products at a time. Please remove a product before adding a new one.`
+      );
+      return;
     }
 
     localStorage.setItem("compareProducts", JSON.stringify(compareProducts));
@@ -87,17 +91,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   document.addEventListener("click", function (e) {
-    console.log("Click event detected on:", e.target);
-
     if (e.target.classList.contains("compare-checkbox")) {
       const productCard = e.target.closest(".product-card");
       const productName = productCard
         ? productCard.querySelector(".product-title").textContent.trim()
-        : "Unknown Product";
-      console.log("Compare checkbox clicked:", {
-        id: e.target.value,
-        name: productName,
-      });
+        : `Product ${e.target.value}`;
       toggleCompareProduct(e.target.value, productName);
     }
 
@@ -105,22 +103,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const productName = document
         .querySelector(".product-title")
         .textContent.trim();
-      const productId = e.target.dataset.productId;
-      console.log("Add/Remove compare clicked:", {
-        id: productId,
-        name: productName,
-      });
-      toggleCompareProduct(productId, productName);
+      toggleCompareProduct(e.target.dataset.productId, productName);
     }
 
     if (e.target.classList.contains("remove-compare")) {
-      const productId = e.target.dataset.productId;
-      const productName = e.target.previousElementSibling.textContent;
-      console.log("Remove from compare clicked:", {
-        id: productId,
-        name: productName,
-      });
-      toggleCompareProduct(productId, productName);
+      toggleCompareProduct(e.target.dataset.productId);
     }
   });
 
