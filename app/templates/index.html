@@ -86,9 +86,20 @@
           </div>
         </form>
       </div>
+      
+      <div class="quick-protein-guide">
+        <h3>Quick Protein Guide</h3>
+        <div class="protein-type-grid">
+          {% for protein in protein_types %}
+            <div class="protein-type-card">
+              <div class="protein-type-icon {{ protein.icon_class }}"></div>
+              <span class="protein-type-name">{{ protein.name }}</span>
+            </div>
+          {% endfor %}
+        </div>
+        <a href="{{ url_for('main.protein_101') }}" class="btn btn-primary btn-block mt-3">Learn More About Protein Types</a>
+      </div>
     </div>
-
-
     
     <div class="products-container">
       <form id="compare-form" action="{{ url_for('main.compare') }}" method="get">
@@ -105,8 +116,11 @@
               </div>
               <h5 class="product-title">{{ product.name }}</h5>
               <p class="product-brand">{{ product.brand }}</p>
+              <div class="protein-type-indicator" data-toggle="tooltip" data-placement="top" title="{{ product.protein_type_description }}">
+                <i class="protein-type-icon {{ product.protein_type_icon }}"></i>
+                <span>{{ product.type }}</span>
+              </div>
               <p class="product-details">
-                <strong>Type:</strong> {{ product.type }}<br>
                 <strong>Protein:</strong> {{ product.protein_per_serving }}g per serving
               </p>
               <p class="product-price">${{ "%.2f"|format(product.price) }}</p>
@@ -123,49 +137,50 @@
           </div>
           {% endfor %}
         </div>
-        <div id="compare-button" class="compare-button" style="display: none;">
-          <div id="compare-badges" class="compare-badges"></div>
-          <button type="submit" class="btn btn-success">Compare Selected Products</button>
-        </div>
-      </form>
 
-      <!-- Pagination -->
-      {% if pagination.pages > 1 %}
-      <nav aria-label="Page navigation" class="mt-4">
-        <ul class="pagination justify-content-center">
-          {% if pagination.has_prev %}
-            <li class="page-item">
-              <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=pagination.prev_num)) }}">&laquo; Previous</a>
-            </li>
-          {% endif %}
-
-          {% for page in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
-            {% if page %}
-              {% if page != pagination.page %}
-                <li class="page-item">
-                  <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=page)) }}">{{ page }}</a>
-                </li>
-              {% else %}
-                <li class="page-item active">
-                  <span class="page-link">{{ page }}</span>
-                </li>
-              {% endif %}
-            {% else %}
-              <li class="page-item disabled">
-                <span class="page-link">...</span>
+        <!-- Pagination -->
+        {% if pagination.pages > 1 %}
+        <nav aria-label="Page navigation" class="mt-4">
+          <ul class="pagination justify-content-center">
+            {% if pagination.has_prev %}
+              <li class="page-item">
+                <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=pagination.prev_num)) }}">&laquo; Previous</a>
               </li>
             {% endif %}
-          {% endfor %}
 
-          {% if pagination.has_next %}
-            <li class="page-item">
-              <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=pagination.next_num)) }}">Next &raquo;</a>
-            </li>
-          {% endif %}
-        </ul>
-      </nav>
-      {% endif %}
+            {% for page in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+              {% if page %}
+                {% if page != pagination.page %}
+                  <li class="page-item">
+                    <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=page)) }}">{{ page }}</a>
+                  </li>
+                {% else %}
+                  <li class="page-item active">
+                    <span class="page-link">{{ page }}</span>
+                  </li>
+                {% endif %}
+              {% else %}
+                <li class="page-item disabled">
+                  <span class="page-link">...</span>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            {% if pagination.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=pagination.next_num)) }}">Next &raquo;</a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+        {% endif %}
+      </form>
     </div>
+  </div>
+
+  <div id="compare-container" class="mt-3" style="display: none;">
+    <div id="compare-badges"></div>
+    <button id="compare-button" class="btn btn-primary" type="button" disabled>Compare Selected Products</button>
   </div>
 </div>
 {% endblock %}

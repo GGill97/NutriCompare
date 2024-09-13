@@ -1,0 +1,423 @@
+{% extends "base.html" %}
+
+{% block title %}Protein 101 - NutriCompare{% endblock %}
+
+{% block meta_description %}Learn about different types of protein, their importance, and how to choose the right protein powder for your needs.{% endblock %}
+
+{% block content %}
+<div class="container mt-4 protein-101">
+    <h1 class="text-center mb-4">Protein 101: Your Complete Guide to Protein Powders</h1>
+
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <section class="mb-5">
+                <h2 class="section-title"><i class="bi bi-book-half me-2"></i>Introduction</h2>
+                <p class="lead">
+                    Protein is a crucial macronutrient that plays a vital role in nearly every biological process in our bodies. From building and repairing tissues to producing enzymes and hormones, protein is essential for overall health and fitness.
+                </p>
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="bi bi-lightbulb me-2"></i>Did you know?</h5>
+                        <p class="card-text">
+                            The word "protein" comes from the Greek word "protos," meaning "first" or "primary." This reflects the fundamental importance of proteins in living organisms.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-5">
+                <h2 class="section-title"><i class="bi bi-diagram-3 me-2"></i>Protein Types</h2>
+                <p>Explore the various types of protein powders available in the market:</p>
+                <div class="accordion" id="proteinTypesAccordion">
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="wheyHeading">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#wheyCollapse" aria-expanded="true" aria-controls="wheyCollapse">
+                                <i class="bi bi-droplet-half me-2"></i>Whey Protein
+                            </button>
+                        </h3>
+                        <div id="wheyCollapse" class="accordion-collapse collapse show" aria-labelledby="wheyHeading" data-bs-parent="#proteinTypesAccordion">
+                            <div class="accordion-body">
+                                <p>Whey protein is a fast-absorbing protein derived from milk. It's rich in branched-chain amino acids (BCAAs) and is especially effective for muscle recovery and growth.</p>
+                                <ul class="protein-benefits">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Rapid absorption</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>High in essential amino acids</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Supports muscle growth and recovery</li>
+                                </ul>
+                                <p><strong>Types of Whey Protein:</strong></p>
+                                <ul>
+                                    <li><strong>Whey Concentrate:</strong> Contains some lactose and fat, typically 70-80% protein.</li>
+                                    <li><strong>Whey Isolate:</strong> Further processed to remove most lactose and fat, usually 90%+ protein.</li>
+                                    <li><strong>Whey Hydrolysate:</strong> Pre-digested form, fastest absorption but can be more expensive.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="caseinHeading">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#caseinCollapse" aria-expanded="false" aria-controls="caseinCollapse">
+                                <i class="bi bi-cup-straw me-2"></i>Casein Protein
+                            </button>
+                        </h3>
+                        <div id="caseinCollapse" class="accordion-collapse collapse" aria-labelledby="caseinHeading" data-bs-parent="#proteinTypesAccordion">
+                            <div class="accordion-body">
+                                <p>Casein is another milk-derived protein that digests slowly, providing a steady release of amino acids. It's often used before bed or for long periods without food.</p>
+                                <ul class="protein-benefits">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Slow digestion rate</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Sustained amino acid release</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Good for overnight recovery</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="eggHeading">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#eggCollapse" aria-expanded="false" aria-controls="eggCollapse">
+                                <i class="bi bi-egg me-2"></i>Egg Protein
+                            </button>
+                        </h3>
+                        <div id="eggCollapse" class="accordion-collapse collapse" aria-labelledby="eggHeading" data-bs-parent="#proteinTypesAccordion">
+                            <div class="accordion-body">
+                                <p>Egg protein is derived from egg whites and is considered a high-quality protein source with excellent bioavailability.</p>
+                                <ul class="protein-benefits">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>High biological value</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Lactose-free alternative to dairy proteins</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Rich in branched-chain amino acids</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="soyHeading">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#soyCollapse" aria-expanded="false" aria-controls="soyCollapse">
+                                <i class="bi bi-flower1 me-2"></i>Soy Protein
+                            </button>
+                        </h3>
+                        <div id="soyCollapse" class="accordion-collapse collapse" aria-labelledby="soyHeading" data-bs-parent="#proteinTypesAccordion">
+                            <div class="accordion-body">
+                                <p>Soy protein is a complete plant-based protein that contains all essential amino acids. It's known for its potential health benefits, including heart health support.</p>
+                                <ul class="protein-benefits">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Complete plant-based protein</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>May support heart health</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Suitable for vegetarians and vegans</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="peaHeading">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#peaCollapse" aria-expanded="false" aria-controls="peaCollapse">
+                                <i class="bi bi-circle me-2"></i>Pea Protein
+                            </button>
+                        </h3>
+                        <div id="peaCollapse" class="accordion-collapse collapse" aria-labelledby="peaHeading" data-bs-parent="#proteinTypesAccordion">
+                            <div class="accordion-body">
+                                <p>Pea protein is extracted from yellow peas and is a popular choice for plant-based protein powders. It's hypoallergenic and easily digestible.</p>
+                                <ul class="protein-benefits">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Hypoallergenic</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Rich in branched-chain amino acids</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Environmentally friendly</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="riceHeading">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#riceCollapse" aria-expanded="false" aria-controls="riceCollapse">
+                                <i class="bi bi-grain me-2"></i>Rice Protein
+                            </button>
+                        </h3>
+                        <div id="riceCollapse" class="accordion-collapse collapse" aria-labelledby="riceHeading" data-bs-parent="#proteinTypesAccordion">
+                            <div class="accordion-body">
+                                <p>Rice protein is a plant-based protein that's hypoallergenic and easily digestible. While not a complete protein on its own, it's often combined with other plant proteins to create a complete amino acid profile.</p>
+                                <ul class="protein-benefits">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Hypoallergenic</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Easily digestible</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Gluten-free</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="hempHeading">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hempCollapse" aria-expanded="false" aria-controls="hempCollapse">
+                                <i class="bi bi-flower2 me-2"></i>Hemp Protein
+                            </button>
+                        </h3>
+                        <div id="hempCollapse" class="accordion-collapse collapse" aria-labelledby="hempHeading" data-bs-parent="#proteinTypesAccordion">
+                            <div class="accordion-body">
+                                <p>Hemp protein is derived from hemp seeds and is rich in omega-3 fatty acids. It's a complete protein that's easily digestible and environmentally friendly.</p>
+                                <ul class="protein-benefits">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Rich in omega-3 fatty acids</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Contains all essential amino acids</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>High in fiber</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h3 class="accordion-header" id="blendHeading">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#blendCollapse" aria-expanded="false" aria-controls="blendCollapse">
+                                <i class="bi bi-menu-button-wide me-2"></i>Protein Blends
+                            </button>
+                        </h3>
+                        <div id="blendCollapse" class="accordion-collapse collapse" aria-labelledby="blendHeading" data-bs-parent="#proteinTypesAccordion">
+                            <div class="accordion-body">
+                                <p>Protein blends combine different protein sources to provide a more complete amino acid profile and balance of fast and slow-digesting proteins.</p>
+                                <ul class="protein-benefits">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Balanced amino acid profile</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Combines benefits of multiple protein sources</li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Versatile for various fitness goals</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-5">
+                <h2 class="section-title"><i class="bi bi-star me-2"></i>Why Protein is Important</h2>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-bullseye text-primary me-2"></i>Muscle Building</h5>
+                                <p class="card-text">Protein provides the building blocks (amino acids) for muscle growth and repair, essential for athletes and fitness enthusiasts.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-lightning-charge text-warning me-2"></i>Energy</h5>
+                                <p class="card-text">When carbohydrates are low, protein can be used as an alternative energy source to fuel your body and workouts.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-heart text-danger me-2"></i>Heart Health</h5>
+                                <p class="card-text">Certain proteins, especially from plant sources, may help lower blood pressure and reduce the risk of heart disease.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title"><i class="bi bi-shield-check text-success me-2"></i>Immune Function <p class="card-text">Protein plays a crucial role in the body's immune response, helping to fight off infections and keep you healthy.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="bi bi-egg-fried text-info me-2"></i>Satiety</h5>
+                                    <p class="card-text">Protein-rich foods and supplements can help you feel fuller for longer, potentially aiding in weight management.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="bi bi-gear text-secondary me-2"></i>Enzyme Production</h5>
+                                    <p class="card-text">Proteins are essential for creating enzymes that facilitate various chemical reactions in your body.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+    
+                <section class="mb-5">
+                    <h2 class="section-title"><i class="bi bi-calculator me-2"></i>How Much Protein Do You Need?</h2>
+                    <p>Protein needs vary based on factors like age, gender, activity level, and health goals. Here are some general guidelines:</p>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Group</th>
+                                    <th>Recommended Daily Intake</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Sedentary Adults</td>
+                                    <td>0.8g per kg of body weight</td>
+                                    <td>Minimum requirement for most adults</td>
+                                </tr>
+                                <tr>
+                                    <td>Recreational Athletes</td>
+                                    <td>1.2-1.4g per kg of body weight</td>
+                                    <td>For maintenance and light training</td>
+                                </tr>
+                                <tr>
+                                    <td>Competitive Athletes</td>
+                                    <td>1.4-2.0g per kg of body weight</td>
+                                    <td>Varies based on training intensity and goals</td>
+                                </tr>
+                                <tr>
+                                    <td>Adults Building Muscle Mass</td>
+                                    <td>1.6-2.2g per kg of body weight</td>
+                                    <td>Combined with resistance training</td>
+                                </tr>
+                                <tr>
+                                    <td>Older Adults (65+)</td>
+                                    <td>1.0-1.2g per kg of body weight</td>
+                                    <td>To maintain muscle mass and strength</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="alert alert-info mt-3" role="alert">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Remember, these are general guidelines. Consult with a healthcare professional or registered dietitian for personalized advice.
+                    </div>
+                </section>
+    
+                <section class="mb-5">
+                    <h2 class="section-title"><i class="bi bi-check2-square me-2"></i>Choosing the Right Protein Powder</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Factors to Consider</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">
+                                            <i class="bi bi-egg-fried text-warning me-2"></i>Dietary restrictions (e.g., vegan, lactose intolerant)
+                                        </li>
+                                        <li class="list-group-item">
+                                            <i class="bi bi-trophy text-success me-2"></i>Fitness goals (e.g., muscle gain, weight loss, recovery)
+                                        </li>
+                                        <li class="list-group-item">
+                                            <i class="bi bi-clock text-info me-2"></i>Digestion speed (fast vs. slow-absorbing proteins)
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">
+                                            <i class="bi bi-currency-dollar text-danger me-2"></i>Budget considerations
+                                        </li>
+                                        <li class="list-group-item">
+                                            <i class="bi bi-cup-straw text-primary me-2"></i>Taste preferences and texture
+                                        </li>
+                                        <li class="list-group-item">
+                                            <i class="bi bi-shield-check text-success me-2"></i>Quality and purity of ingredients
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+    
+                <section class="mb-5">
+                    <h2 class="section-title"><i class="bi bi-patch-question me-2"></i>Protein Myths and Facts</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card border-danger mb-3">
+                                <div class="card-header bg-danger text-white">
+                                    <h5 class="card-title mb-0"><i class="bi bi-x-circle me-2"></i>Myths</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li><i class="bi bi-x text-danger me-2"></i>More protein always leads to more muscle gain</li>
+                                        <li><i class="bi bi-x text-danger me-2"></i>Protein powders are only for bodybuilders</li>
+                                        <li><i class="bi bi-x text-danger me-2"></i>Plant-based proteins are inferior to animal proteins</li>
+                                        <li><i class="bi bi-x text-danger me-2"></i>Protein supplements are harmful to kidneys</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-success mb-3">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="card-title mb-0"><i class="bi bi-check-circle me-2"></i>Facts</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled">
+                                        <li><i class="bi bi-check text-success me-2"></i>Protein needs vary based on individual factors</li>
+                                        <li><i class="bi bi-check text-success me-2"></i>Protein powders can benefit various lifestyles and goals</li>
+                                        <li><i class="bi bi-check text-success me-2"></i>Many plant-based proteins provide complete amino acid profiles</li>
+                                        <li><i class="bi bi-check text-success me-2"></i>Moderate protein intake is safe for healthy individuals</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+    
+                <section class="mb-5">
+                    <h2 class="section-title"><i class="bi bi-cup-straw me-2"></i>Integrating Protein Powders into Your Diet</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Creative Ways to Use Protein Powder</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title"><i class="bi bi-cup text-primary me-2"></i>Smoothies</h6>
+                                            <p class="card-text">Blend with fruits, vegetables, and your choice of liquid for a nutritious meal replacement or post-workout shake.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title"><i class="bi bi-egg-fried text-warning me-2"></i>Baked Goods</h6>
+                                            <p class="card-text">Add to pancakes, muffins, or protein bars for a boost of nutrition in your snacks and treats.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-title"><i class="bi bi-cup-hot text-danger me-2"></i>Oatmeal</h6>
+                                            <p class="card-text">Stir into your morning oatmeal for a protein-packed breakfast that keeps you full longer.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning mt-3" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Remember, while protein powders can be beneficial, they should complement a balanced diet, not replace whole food sources of protein.
+                    </div>
+                </section>
+    
+                <section class="mb-5">
+                    <h2 class="section-title"><i class="bi bi-chat-quote me-2"></i>Expert Tips</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <blockquote class="blockquote mb-0">
+                                <p>"When choosing a protein powder, look for products with minimal additives and artificial ingredients. The simpler the ingredient list, often the better the quality."</p>
+                                <footer class="blockquote-footer">Dr. Jane Smith, <cite title="Source Title">Nutritionist</footer>
+                            </blockquote>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+    
+    {% block page_scripts %}
+    <script>
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+    {% endblock %}

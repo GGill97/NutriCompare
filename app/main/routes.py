@@ -3,6 +3,27 @@ from app.main import bp
 from app.models import Product, db
 from sqlalchemy import or_, func, and_
 
+@bp.route('/protein-101')
+def protein_101():
+    protein_types = [
+        {
+            "name": "Whey Protein",
+            "description": "A fast-absorbing protein derived from milk, ideal for post-workout recovery.",
+            "short_description": "Fast-absorbing, milk-derived protein."
+        },
+        {
+            "name": "Casein Protein",
+            "description": "A slow-absorbing protein also derived from milk, often used before bed for sustained release.",
+            "short_description": "Slow-absorbing, milk-derived protein."
+        },
+        {
+            "name": "Plant-based Protein",
+            "description": "Protein derived from plant sources like pea, rice, or soy. Suitable for vegans and those with dairy allergies.",
+            "short_description": "Vegan-friendly protein from plant sources."
+        },
+        # Add more protein types as needed
+    ]
+    return render_template('protein_101.html', protein_types=protein_types)
 
 @bp.route('/')
 @bp.route('/index')
@@ -70,10 +91,43 @@ def index():
     brands = db.session.query(Product.brand).distinct().order_by(Product.brand)
     categories = db.session.query(Product.type).distinct().order_by(Product.type)
 
+    protein_types = [
+        {
+            "name": "Whey Protein",
+            "icon_class": "icon-whey",
+            "description": "Fast-absorbing, milk-derived protein."
+        },
+        {
+            "name": "Casein Protein",
+            "icon_class": "icon-casein",
+            "description": "Slow-absorbing, milk-derived protein."
+        },
+        {
+            "name": "Plant-based Protein",
+            "icon_class": "icon-plant",
+            "description": "Protein derived from plant sources like pea, rice, or soy."
+        },
+        # Add more protein types as needed
+    ]
+    
+    # Modify the query to include protein type information
+    products = pagination.items
+    for product in products:
+        if "whey" in product.type.lower():
+            product.protein_type_icon = "icon-whey"
+            product.protein_type_description = "Whey protein: Fast-absorbing, milk-derived protein."
+        elif "casein" in product.type.lower():
+            product.protein_type_icon = "icon-casein"
+            product.protein_type_description = "Casein protein: Slow-absorbing, milk-derived protein."
+        else:
+            product.protein_type_icon = "icon-plant"
+            product.protein_type_description = "Plant-based protein: Protein derived from plant sources."
+    
     return render_template('index.html', 
                            pagination=pagination,
                            brands=brands,
                            categories=categories,
+                           protein_types=protein_types,
                            current_filters={
                                'brand': brand,
                                'category': categories,
@@ -92,7 +146,6 @@ def product_detail(id):
         Product.id != product.id
     ).order_by(func.random()).limit(3).all()
     return render_template('product_detail.html', title=product.name, product=product, similar_products=similar_products)
-
 
 @bp.route('/compare')
 def compare():
@@ -125,7 +178,6 @@ def compare():
                            products=products_to_compare, 
                            chart_data=chart_data)
 
-
 @bp.route('/search')
 def search():
     query = request.args.get('query', '')
@@ -138,4 +190,3 @@ def search():
         )).limit(10).all()
         return jsonify([{'id': p.id, 'name': p.name, 'brand': p.brand} for p in products])
     return jsonify([])
-
