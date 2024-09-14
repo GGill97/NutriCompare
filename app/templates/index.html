@@ -13,7 +13,7 @@
           <div class="filter-section">
             <label for="search">Search</label>
             <div class="input-group mb-3">
-              <input type="text" class="form-control" id="search" name="search" placeholder="Search products..." value="{{ current_filters.search or '' }}">
+              <input type="text" class="form-control" id="search" name="search" placeholder="Search products..." value="{{ request.args.get('search', '') }}">
               <button class="btn btn-outline-secondary" type="submit">Search</button>
             </div>
           </div>
@@ -24,7 +24,7 @@
             <select class="form-select" id="brand" name="brand">
               <option value="">All Brands</option>
               {% for brand in brands %}
-                <option value="{{ brand[0] }}" {% if current_filters.brand == brand[0] %}selected{% endif %}>{{ brand[0] }}</option>
+                <option value="{{ brand[0] }}" {% if request.args.get('brand') == brand[0] %}selected{% endif %}>{{ brand[0] }}</option>
               {% endfor %}
             </select>
           </div>
@@ -34,7 +34,7 @@
             <label for="category">Product Types</label>
             <select class="form-select" id="category" name="category" multiple>
               {% for category in categories %}
-                <option value="{{ category[0] }}" {% if category[0] in current_filters.category %}selected{% endif %}>{{ category[0] }}</option>
+                <option value="{{ category[0] }}" {% if category[0] in request.args.getlist('category') %}selected{% endif %}>{{ category[0] }}</option>
               {% endfor %}
             </select>
           </div>
@@ -44,10 +44,10 @@
             <label for="price-range">Price Range</label>
             <select class="form-select" id="price-range" name="price_range">
               <option value="">All Prices</option>
-              <option value="0-20" {% if current_filters.price_range == '0-20' %}selected{% endif %}>$0 - $20</option>
-              <option value="20-40" {% if current_filters.price_range == '20-40' %}selected{% endif %}>$20 - $40</option>
-              <option value="40-60" {% if current_filters.price_range == '40-60' %}selected{% endif %}>$40 - $60</option>
-              <option value="60+" {% if current_filters.price_range == '60+' %}selected{% endif %}>$60+</option>
+              <option value="0-20" {% if request.args.get('price_range') == '0-20' %}selected{% endif %}>$0 - $20</option>
+              <option value="20-40" {% if request.args.get('price_range') == '20-40' %}selected{% endif %}>$20 - $40</option>
+              <option value="40-60" {% if request.args.get('price_range') == '40-60' %}selected{% endif %}>$40 - $60</option>
+              <option value="60+" {% if request.args.get('price_range') == '60+' %}selected{% endif %}>$60+</option>
             </select>
           </div>
 
@@ -56,9 +56,9 @@
             <label for="protein-range">Protein Content</label>
             <select class="form-select" id="protein-range" name="protein_range">
               <option value="">All Protein Levels</option>
-              <option value="0-15" {% if current_filters.protein_range == '0-15' %}selected{% endif %}>0 - 15g per serving</option>
-              <option value="15-25" {% if current_filters.protein_range == '15-25' %}selected{% endif %}>15 - 25g per serving</option>
-              <option value="25+" {% if current_filters.protein_range == '25+' %}selected{% endif %}>25g+ per serving</option>
+              <option value="0-15" {% if request.args.get('protein_range') == '0-15' %}selected{% endif %}>0 - 15g per serving</option>
+              <option value="15-25" {% if request.args.get('protein_range') == '15-25' %}selected{% endif %}>15 - 25g per serving</option>
+              <option value="25+" {% if request.args.get('protein_range') == '25+' %}selected{% endif %}>25g+ per serving</option>
             </select>
           </div>
 
@@ -66,17 +66,17 @@
           <div class="filter-section">
             <label for="sort">Sort By</label>
             <select class="form-select" id="sort" name="sort">
-              <option value="name" {% if current_filters.sort == 'name' %}selected{% endif %}>Name</option>
-              <option value="price" {% if current_filters.sort == 'price' %}selected{% endif %}>Price</option>
-              <option value="protein" {% if current_filters.sort == 'protein' %}selected{% endif %}>Protein Content</option>
+              <option value="name" {% if request.args.get('sort') == 'name' %}selected{% endif %}>Name</option>
+              <option value="price" {% if request.args.get('sort') == 'price' %}selected{% endif %}>Price</option>
+              <option value="protein" {% if request.args.get('sort') == 'protein' %}selected{% endif %}>Protein Content</option>
             </select>
           </div>
 
           <div class="filter-section">
             <label for="order">Order</label>
             <select class="form-select" id="order" name="order">
-              <option value="asc" {% if current_filters.order == 'asc' %}selected{% endif %}>Ascending</option>
-              <option value="desc" {% if current_filters.order == 'desc' %}selected{% endif %}>Descending</option>
+              <option value="asc" {% if request.args.get('order') == 'asc' %}selected{% endif %}>Ascending</option>
+              <option value="desc" {% if request.args.get('order') == 'desc' %}selected{% endif %}>Descending</option>
             </select>
           </div>
 
@@ -102,79 +102,85 @@
     </div>
     
     <div class="products-container">
-      <form id="compare-form" action="{{ url_for('main.compare') }}" method="get">
-        <div class="product-grid">
-          {% for product in pagination.items %}
-          <div class="product-card">
-            <div class="product-card-body">
-              <div class="product-image-container">
-                {% if product.image_url %}
-                  <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
-                {% else %}
-                  <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available" class="product-image">
-                {% endif %}
-              </div>
-              <h5 class="product-title">{{ product.name }}</h5>
-              <p class="product-brand">{{ product.brand }}</p>
-              <div class="protein-type-indicator" data-toggle="tooltip" data-placement="top" title="{{ product.protein_type_description }}">
-                <i class="protein-type-icon {{ product.protein_type_icon }}"></i>
-                <span>{{ product.type }}</span>
-              </div>
-              <p class="product-details">
-                <strong>Protein:</strong> {{ product.protein_per_serving }}g per serving
-              </p>
-              <p class="product-price">${{ "%.2f"|format(product.price) }}</p>
-              <div class="product-actions">
-                <div class="form-check">
-                  <input class="form-check-input compare-checkbox" type="checkbox" name="products" value="{{ product.id }}" id="compare-{{ product.id }}">
-                  <label class="form-check-label" for="compare-{{ product.id }}">
-                    Compare
-                  </label>
+      {% if pagination.items %}
+        <form id="compare-form" action="{{ url_for('main.compare') }}" method="get">
+          <div class="product-grid">
+            {% for product in pagination.items %}
+            <div class="product-card">
+              <div class="product-card-body">
+                <div class="product-image-container">
+                  {% if product.image_url %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+                  {% else %}
+                    <img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="No image available" class="product-image">
+                  {% endif %}
                 </div>
-                <a href="{{ url_for('main.product_detail', id=product.id) }}" class="btn btn-primary btn-sm btn-view-details">View Details</a>
+                <h5 class="product-title">{{ product.name }}</h5>
+                <p class="product-brand">{{ product.brand }}</p>
+                <div class="protein-type-indicator" data-toggle="tooltip" data-placement="top" title="{{ product.protein_type_description }}">
+                  <i class="protein-type-icon {{ product.protein_type_icon }}"></i>
+                  <span>{{ product.type }}</span>
+                </div>
+                <p class="product-details">
+                  <strong>Protein:</strong> {{ product.protein_per_serving }}g per serving
+                </p>
+                <p class="product-price">${{ "%.2f"|format(product.price) }}</p>
+                <div class="product-actions">
+                  <div class="form-check">
+                    <input class="form-check-input compare-checkbox" type="checkbox" name="products" value="{{ product.id }}" id="compare-{{ product.id }}">
+                    <label class="form-check-label" for="compare-{{ product.id }}">
+                      Compare
+                    </label>
+                  </div>
+                  <a href="{{ url_for('main.product_detail', id=product.id) }}" class="btn btn-primary btn-sm btn-view-details">View Details</a>
+                </div>
               </div>
             </div>
+            {% endfor %}
           </div>
-          {% endfor %}
-        </div>
 
-        <!-- Pagination -->
-        {% if pagination.pages > 1 %}
-        <nav aria-label="Page navigation" class="mt-4">
-          <ul class="pagination justify-content-center">
-            {% if pagination.has_prev %}
-              <li class="page-item">
-                <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=pagination.prev_num)) }}">&laquo; Previous</a>
-              </li>
-            {% endif %}
-
-            {% for page in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
-              {% if page %}
-                {% if page != pagination.page %}
-                  <li class="page-item">
-                    <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=page)) }}">{{ page }}</a>
-                  </li>
-                {% else %}
-                  <li class="page-item active">
-                    <span class="page-link">{{ page }}</span>
-                  </li>
-                {% endif %}
-              {% else %}
-                <li class="page-item disabled">
-                  <span class="page-link">...</span>
+          <!-- Pagination -->
+          {% if pagination.pages > 1 %}
+          <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+              {% if pagination.has_prev %}
+                <li class="page-item">
+                  <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=pagination.prev_num)) }}">&laquo; Previous</a>
                 </li>
               {% endif %}
-            {% endfor %}
 
-            {% if pagination.has_next %}
-              <li class="page-item">
-                <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=pagination.next_num)) }}">Next &raquo;</a>
-              </li>
-            {% endif %}
-          </ul>
-        </nav>
-        {% endif %}
-      </form>
+              {% for page in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if page %}
+                  {% if page != pagination.page %}
+                    <li class="page-item">
+                      <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=page)) }}">{{ page }}</a>
+                    </li>
+                  {% else %}
+                    <li class="page-item active">
+                      <span class="page-link">{{ page }}</span>
+                    </li>
+                  {% endif %}
+                {% else %}
+                  <li class="page-item disabled">
+                    <span class="page-link">...</span>
+                  </li>
+                {% endif %}
+              {% endfor %}
+
+              {% if pagination.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="{{ url_for('main.index', **dict(request.args, page=pagination.next_num)) }}">Next &raquo;</a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
+          {% endif %}
+        </form>
+      {% else %}
+        <div class="alert alert-warning" role="alert">
+          No products found matching your criteria. Try adjusting your filters or search terms.
+        </div>
+      {% endif %}
     </div>
   </div>
 

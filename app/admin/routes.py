@@ -67,7 +67,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('main.index'))
+    return redirect(url_for('admin.login'))
 
 @bp.route('/')
 @login_required
@@ -85,7 +85,6 @@ def index():
         products = Product.query.all()
     return render_template('admin/index.html', products=products, search_query=search_query)
 
-# ... (keep existing imports and other functions)
 
 @bp.route('/product/create', methods=['GET', 'POST'])
 @login_required

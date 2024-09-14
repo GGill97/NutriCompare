@@ -943,3 +943,12 @@ def add_products():
 
 if __name__ == "__main__":
     add_products()
+    
+    
+#     Summary
+# Purpose: Clears existing products and adds a predefined set of products and categories to the database.
+# Key Steps:
+# Remove existing products.
+# Ensure categories exist or add them.
+# Add new products with proper categorization.
+# Verify the addition of products and categories.

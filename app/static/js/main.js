@@ -152,7 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = compareUrl.toString();
       } else {
         console.log("Invalid number of products selected for comparison");
-        alert(
+        alert(x
           `Please select between ${MIN_COMPARE_PRODUCTS} and ${MAX_COMPARE_PRODUCTS} products to compare.`
         );
       }

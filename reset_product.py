@@ -111,3 +111,13 @@ def reset_products():
 
 if __name__ == "__main__":
     reset_products()
+    
+    
+# Summary
+# Purpose: This script resets the Product table in your database by deleting all existing entries and adding a fresh set of predefined products.
+# Key Steps:
+# Deletes old products.
+# Ensures necessary categories are present.
+# Adds new products with associated data.
+# Verifies that the products were added correctly.
+# This script is useful for quickly resetting your product data, especially during development or testing phases.

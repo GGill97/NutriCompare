@@ -10,3 +10,12 @@ class Config:
     UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/uploads')
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     ADMIN_PASSWORD = 'your-secure-password-here'
+    
+# Summary
+# Purpose: Provides various settings for configuring the Flask application.
+# Key Settings:
+# Secret key for security.
+# Database connection settings.
+# File upload limits and allowed file types.
+# Pagination settings.
+# Directory for saving uploaded files.
