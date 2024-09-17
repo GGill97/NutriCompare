@@ -1,13 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-  <h1 class="text-center mb-4">NutriCompare: Discover Your Ideal Protein Powder</h1>
-
+<div class="hero-section">
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">Compare, Choose, Conquer</h1>
+      <p class="hero-subtitle">Your Journey to the Perfect Protein Powder Starts Here</p>
+    </div>
+  </div>
+</div>
   <div class="main-content">
     <div class="sidebar">
       <div class="filter-container">
-        <h2>Filters</h2>
+        <h2>Fillters</h2>
         <form id="filter-form" method="GET" action="{{ url_for('main.index') }}">
           <!-- Search filter -->
           <div class="filter-section">

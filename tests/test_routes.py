@@ -39,6 +39,7 @@ class RouteTestCase(unittest.TestCase):
         db.session.add(product)
         db.session.commit()
 
+        # Use SQLAlchemy 2.0 style query
         response = self.client.get(f'/product/{product.id}')
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Test Protein', response.data)

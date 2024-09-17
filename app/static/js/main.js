@@ -152,8 +152,8 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = compareUrl.toString();
       } else {
         console.log("Invalid number of products selected for comparison");
-        alert(x
-          `Please select between ${MIN_COMPARE_PRODUCTS} and ${MAX_COMPARE_PRODUCTS} products to compare.`
+        alert(
+          x`Please select between ${MIN_COMPARE_PRODUCTS} and ${MAX_COMPARE_PRODUCTS} products to compare.`
         );
       }
     }
@@ -163,7 +163,6 @@ document.addEventListener("DOMContentLoaded", function () {
   console.log("Initial compare UI update completed");
 });
 
-// ... (keep the rest of the file unchanged)
 
 // --- Filter Functionality ---
 if (filterForm) {
@@ -224,3 +223,8 @@ if (productImage) {
     this.style.transformOrigin = "center center";
   });
 }
+// Chart creation logic
+if (document.querySelector(".compare-container")) {
+  createCharts();
+}
+

@@ -1,4 +1,4 @@
-from flask import render_template, request, current_app, url_for, redirect, jsonify, flash
+from flask import render_template, request, current_app, url_for, redirect, jsonify, flash, abort
 from app.main import bp
 from app.models import Product, db
 from sqlalchemy import or_, func, and_
@@ -32,7 +32,7 @@ def index():
     per_page = current_app.config['PRODUCTS_PER_PAGE']
 
     # Base query
-    query = Product.query
+    query = current_app.extensions['sqlalchemy'].session.query(Product)
 
     # Apply filters
     brand = request.args.get('brand')
@@ -140,11 +140,13 @@ def index():
 
 @bp.route('/product/<int:id>')
 def product_detail(id):
-    product = Product.query.get_or_404(id)
-    similar_products = Product.query.filter(
-        Product.type == product.type,
-        Product.id != product.id
-    ).order_by(func.random()).limit(3).all()
+    product = current_app.extensions['sqlalchemy'].session.get(Product, id)
+    if product is None:
+        abort(404)
+    similar_products = current_app.extensions['sqlalchemy'].session.query(Product).filter(
+    Product.type == product.type,
+    Product.id != product.id
+).order_by(func.random()).limit(3).all()
     return render_template('product_detail.html', title=product.name, product=product, similar_products=similar_products)
 
 @bp.route('/compare')
@@ -155,7 +157,7 @@ def compare():
         flash('Please select at least two products to compare.', 'warning')
         return redirect(url_for('main.index'))
 
-    products_to_compare = Product.query.filter(Product.id.in_(product_ids)).all()
+    products_to_compare = current_app.extensions['sqlalchemy'].session.query(Product).filter(Product.id.in_(product_ids)).all()
 
     if len(products_to_compare) != len(product_ids):
         flash('One or more selected products could not be found.', 'error')
@@ -183,10 +185,10 @@ def search():
     query = request.args.get('query', '')
     if query:
         search = f"%{query}%"
-        products = Product.query.filter(or_(
-            Product.name.ilike(search),
-            Product.brand.ilike(search),
-            Product.type.ilike(search)
-        )).limit(10).all()
+        products = current_app.extensions['sqlalchemy'].session.query(Product).filter(or_(
+    Product.name.ilike(search),
+    Product.brand.ilike(search),
+    Product.type.ilike(search)
+)).limit(10).all()
         return jsonify([{'id': p.id, 'name': p.name, 'brand': p.brand} for p in products])
     return jsonify([])

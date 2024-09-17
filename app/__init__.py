@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, abort, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager # add this import
 from config import Config
@@ -26,7 +26,7 @@ def create_app(config_class=Config):
     
     @login_manager.user_loader
     def load_user(user_id):
-        return models.Admin.query.get(int(user_id))
+        return current_app.extensions['sqlalchemy'].session.get(models.Admin, int(user_id))
 
     @app.cli.command("init-db")
     @with_appcontext

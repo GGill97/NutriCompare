@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, request, current_app
+from flask import render_template, redirect, url_for, flash, request, current_app, session,abort
 from flask_login import login_required, login_user, logout_user
 from app import db
 from app.admin import bp
@@ -55,7 +55,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        admin = Admin.query.filter_by(username=username).first()
+        admin = current_app.extensions['sqlalchemy'].session.query(Admin).filter_by(username=username).first()
         if admin and admin.check_password(password):
             login_user(admin)
             return redirect(url_for('admin.index'))
@@ -72,9 +72,15 @@ def logout():
 @bp.route('/')
 @login_required
 def index():
-    search_query = request.args.get('search', '')
+    if 'search' in request.args:
+        search_query = request.args.get('search', '')
+        session['search_query'] = search_query
+    else:
+        search_query = session.get('search_query', '')
+
+    # CHANGE: Updated search query to use new style
     if search_query:
-        products = Product.query.filter(
+        products = current_app.extensions['sqlalchemy'].session.query(Product).filter(
             or_(
                 Product.name.ilike(f'%{search_query}%'),
                 Product.brand.ilike(f'%{search_query}%'),
@@ -82,7 +88,7 @@ def index():
             )
         ).all()
     else:
-        products = Product.query.all()
+        products = current_app.extensions['sqlalchemy'].session.query(Product).all()
     return render_template('admin/index.html', products=products, search_query=search_query)
 
 
@@ -94,7 +100,9 @@ def create_new_product():
         logging.debug(f"Form data: {request.form}")
         logging.debug(f"Files: {request.files}")
         
-        category = Category.query.filter_by(name=request.form['type']).first()
+        categories = current_app.extensions['sqlalchemy'].session.query(Category).all()
+        return render_template('admin/product_form.html', categories=categories)
+
         if not category:
             category = Category(name=request.form['type'])
             db.session.add(category)
@@ -158,20 +166,24 @@ def create_new_product():
             logging.error(f"Error adding product to database: {str(e)}")
             flash(f'An error occurred: {str(e)}')
     
-    categories = Category.query.all()
+    categories = current_app.extensions['sqlalchemy'].session.query(Category).all()
     return render_template('admin/product_form.html', categories=categories)
 
 @bp.route('/product/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_product(id):
     logging.info(f"Editing product with id: {id}")
-    product = Product.query.get_or_404(id)
+    product = current_app.extensions['sqlalchemy'].session.get(Product, id)
+    if product is None: 
+        abort(404)
+
+
     if request.method == 'POST':
         logging.info("Received POST request to edit product")
         logging.debug(f"Form data: {request.form}")
         logging.debug(f"Files: {request.files}")
         
-        category = Category.query.filter_by(name=request.form['type']).first()
+        category = current_app.extensions['sqlalchemy'].session.query(Category).filter_by(name=request.form['type']).first()
         if not category:
             category = Category(name=request.form['type'])
             db.session.add(category)
@@ -221,15 +233,18 @@ def edit_product(id):
             db.session.rollback()
             flash(f'An error occurred: {str(e)}')
     
-    categories = Category.query.all()
+    categories = current_app.extensions['sqlalchemy'].session.query(Category).all()
     return render_template('admin/product_form.html', product=product, categories=categories)
+
 
 
 
 @bp.route('/product/<int:id>/delete', methods=['POST'])
 @login_required
 def delete_product(id):
-    product = Product.query.get_or_404(id)
+    product = current_app.extensions['sqlalchemy'].session.get(Product, id)
+    if product is None:
+        abort(404)
     if product.image_url:
         file_path = os.path.join(current_app.root_path, product.image_url.lstrip('/'))
         if os.path.exists(file_path):

@@ -1,21 +1,16 @@
 import os
+from dotenv import load_dotenv
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '.env'))
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(os.path.abspath(os.path.dirname(__file__)), 'app.db')
+        'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PRODUCTS_PER_PAGE = 15
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
-    UPLOAD_FOLDER = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/uploads')
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or os.path.join(basedir, 'static/uploads')
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-    ADMIN_PASSWORD = 'your-secure-password-here'
-    
-# Summary
-# Purpose: Provides various settings for configuring the Flask application.
-# Key Settings:
-# Secret key for security.
-# Database connection settings.
-# File upload limits and allowed file types.
-# Pagination settings.
-# Directory for saving uploaded files.
+    ADMIN_PASSWORD = os.environ.get('ADMIN_PASSWORD')

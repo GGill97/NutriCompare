@@ -52,60 +52,60 @@ class ModelTestCase(unittest.TestCase):
         self.assertEqual(str(product), '<Product Test Protein>')
         self.assertEqual(product.category, category)
 
-def test_product_fields(self):
-    category = Category(name='Whey Protein')
-    product = Product(
-        name='Test Protein',
-        brand='Test Brand',
-        type='Whey',
-        flavor='Vanilla',
-        ingredients='Whey protein isolate, natural flavors',
-        protein_per_serving=25.0,
-        calories=120,  # Changed from calories_per_serving to calories
-        sugar=1.0,
-        carbohydrates=3.0,
-        fats=2.0,
-        saturated_fats=0.5,
-        cholesterol=30.0,
-        sodium=50.0,
-        dietary_fiber=0.5,
-        price=39.99,
-        serving_size='30g',
-        servings_per_container=30,
-        flavors='Vanilla, Chocolate',
-        allergens='Contains milk',
-        description='A high-quality whey protein powder',
-        source='Milk',
-        category=category,
-        image_url='http://example.com/image.jpg'
-    )
-    db.session.add(product)
-    db.session.commit()
+    def test_product_fields(self):
+        category = Category(name='Whey Protein')
+        product = Product(
+            name='Test Protein',
+            brand='Test Brand',
+            type='Whey',
+            flavor='Vanilla',
+            ingredients='Whey protein isolate, natural flavors',
+            protein_per_serving=25.0,
+            calories=120,  # Changed from calories_per_serving to calories
+            sugar=1.0,
+            carbohydrates=3.0,
+            fats=2.0,
+            saturated_fats=0.5,
+            cholesterol=30.0,
+            sodium=50.0,
+            dietary_fiber=0.5,
+            price=39.99,
+            serving_size='30g',
+            servings_per_container=30,
+            flavors='Vanilla, Chocolate',
+            allergens='Contains milk',
+            description='A high-quality whey protein powder',
+            source='Milk',
+            category=category,
+            image_url='http://example.com/image.jpg'
+        )
+        db.session.add(product)
+        db.session.commit()
 
-    retrieved_product = Product.query.first()
-    self.assertEqual(retrieved_product.name, 'Test Protein')
-    self.assertEqual(retrieved_product.brand, 'Test Brand')
-    self.assertEqual(retrieved_product.type, 'Whey')
-    self.assertEqual(retrieved_product.flavor, 'Vanilla')
-    self.assertEqual(retrieved_product.ingredients, 'Whey protein isolate, natural flavors')
-    self.assertEqual(retrieved_product.protein_per_serving, 25.0)
-    self.assertEqual(retrieved_product.calories, 120)  # Changed from calories_per_serving to calories
-    self.assertEqual(retrieved_product.sugar, 1.0)
-    self.assertEqual(retrieved_product.carbohydrates, 3.0)
-    self.assertEqual(retrieved_product.fats, 2.0)
-    self.assertEqual(retrieved_product.saturated_fats, 0.5)
-    self.assertEqual(retrieved_product.cholesterol, 30.0)
-    self.assertEqual(retrieved_product.sodium, 50.0)
-    self.assertEqual(retrieved_product.dietary_fiber, 0.5)
-    self.assertEqual(retrieved_product.price, 39.99)
-    self.assertEqual(retrieved_product.serving_size, '30g')
-    self.assertEqual(retrieved_product.servings_per_container, 30)
-    self.assertEqual(retrieved_product.flavors, 'Vanilla, Chocolate')
-    self.assertEqual(retrieved_product.allergens, 'Contains milk')
-    self.assertEqual(retrieved_product.description, 'A high-quality whey protein powder')
-    self.assertEqual(retrieved_product.source, 'Milk')
-    self.assertEqual(retrieved_product.image_url, 'http://example.com/image.jpg')
-    
+        retrieved_product = Product.query.first()
+        self.assertEqual(retrieved_product.name, 'Test Protein')
+        self.assertEqual(retrieved_product.brand, 'Test Brand')
+        self.assertEqual(retrieved_product.type, 'Whey')
+        self.assertEqual(retrieved_product.flavor, 'Vanilla')
+        self.assertEqual(retrieved_product.ingredients, 'Whey protein isolate, natural flavors')
+        self.assertEqual(retrieved_product.protein_per_serving, 25.0)
+        self.assertEqual(retrieved_product.calories, 120)  # Changed from calories_per_serving to calories
+        self.assertEqual(retrieved_product.sugar, 1.0)
+        self.assertEqual(retrieved_product.carbohydrates, 3.0)
+        self.assertEqual(retrieved_product.fats, 2.0)
+        self.assertEqual(retrieved_product.saturated_fats, 0.5)
+        self.assertEqual(retrieved_product.cholesterol, 30.0)
+        self.assertEqual(retrieved_product.sodium, 50.0)
+        self.assertEqual(retrieved_product.dietary_fiber, 0.5)
+        self.assertEqual(retrieved_product.price, 39.99)
+        self.assertEqual(retrieved_product.serving_size, '30g')
+        self.assertEqual(retrieved_product.servings_per_container, 30)
+        self.assertEqual(retrieved_product.flavors, 'Vanilla, Chocolate')
+        self.assertEqual(retrieved_product.allergens, 'Contains milk')
+        self.assertEqual(retrieved_product.description, 'A high-quality whey protein powder')
+        self.assertEqual(retrieved_product.source, 'Milk')
+        self.assertEqual(retrieved_product.image_url, 'http://example.com/image.jpg')
+        
     def test_admin_creation(self):
         admin = Admin(username='testadmin')
         admin.set_password('testpassword')
@@ -114,6 +114,46 @@ def test_product_fields(self):
         self.assertIsNotNone(admin.id)
         self.assertTrue(admin.check_password('testpassword'))
         self.assertFalse(admin.check_password('wrongpassword'))
+        
+    def test_product_representation(self):
+        product = Product(
+            name="Test Product",
+            brand="Test Brand",
+            protein_per_serving=25.0,
+            price=39.99,
+            category=Category(name="Test Category")
+        )
+        db.session.add(product)
+        db.session.commit()
+    
+        # Retrieve the product from the database
+        retrieved_product = db.session.get(Product, product.id)
+        
+        # This line should trigger the __repr__ method
+        repr_string = repr(retrieved_product)
+        
+        # Check that the __repr__ method returns the expected string
+        assert repr_string == "<Product Test Product>"
+        
+    # Also check the str representation
+        assert str(retrieved_product) == "<Product Test Product>"
+    def test_admin_password_methods(self):
+        admin = Admin(username="testadmin")
+        admin.set_password("testpassword")
+        assert admin.password_hash is not None
+        assert admin.check_password("testpassword") is True
+        assert admin.check_password("wrongpassword") is False
+
+    def test_admin_properties(self):
+        admin = Admin(username="testadmin")
+        assert admin.is_authenticated is True
+        assert admin.is_active is True
+        assert admin.is_anonymous is False
+
+    def test_admin_get_id(self):
+        admin = Admin(username="testadmin")
+        admin.id = 1
+        assert admin.get_id() == "1"
 
     def test_admin_unique_username(self):
         admin1 = Admin(username='testadmin')
