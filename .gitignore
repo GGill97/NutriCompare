@@ -33,3 +33,5 @@ Thumbs.db
 
 # If using any JavaScript build tools
 node_modules/
+.DS_Store
+static/images/ # For large static files
