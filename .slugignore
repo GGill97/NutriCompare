@@ -1,0 +1,17 @@
+/tests
+*.log
+*.pot
+*.pyc
+__pycache__/
+.git
+.github
+.gitignore
+.gitlab-ci.yml
+.DS_Store
+venv/
+.git/
+.pytest_cache/
+tests/
+**pycache**/
+*.pyc
+.coverage
